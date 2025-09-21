@@ -37,4 +37,8 @@ export class Cart {
       return false;
     }
   }
+
+  clear():void {
+    this.products = []
+  }
 }
