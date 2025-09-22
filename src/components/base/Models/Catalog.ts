@@ -7,6 +7,7 @@ export class Catalog {
 
   setProducts(data: IProduct[]): void {
     this.products = data;
+    console.log('Список товаров получен') //для проверки
   }
 
   getProducts(): IProduct[] {
@@ -14,17 +15,18 @@ export class Catalog {
   }
   getProductById(id: string): IProduct|undefined{
     const item = this.products.find((product) => product.id === id);
-    if (item?.id) {
+    if (item) {
       return item
     } else {
-      console.log('Товара с таким id не сущестует')     
+      console.log('Товара с таким id не сущестует') //для проверки
     }
      
   }
 
   setProduct(id: string): void{
     const product = this.getProductById(id);
-    this.product = product
+    this.product = product;
+    console.log('Товар выбран') //для проверки
     
   }
   getProduct(): IProduct | undefined {

@@ -12,23 +12,11 @@ export class Buyer {
   constructor() {}
 
   setData(userData: Partial<IBuyer>): void {
-    if (userData["payment"] && userData["payment"] !== "card" && userData["payment"] !== "cash" && userData["payment"] !== "") {
-      return;
-    }
     const mergedObject = Object.assign({}, this.data, userData);
     this.data = mergedObject;
+    const keys = Object.keys(userData).toString(); //для проверки
+    console.log(keys, "изменено"); //для проверки
   }
-
-  // setData(field: BuyerKeys, value: string | Payment): void {
-  //   function isPayment(value: string): value is Payment {
-  //     return value === "card" || value === "cash";
-  //   }
-  //   if (field !== "payment") {
-  //     this.data[field] = value;
-  //   } else if (isPayment(value)) {
-  //     this.data[field] = value;
-  //   }
-  // }
 
   getData(): IBuyer {
     return this.data;
@@ -38,11 +26,11 @@ export class Buyer {
     Object.keys(this.data).forEach((key) => {
       this.data[key as keyof IBuyer] = "";
     });
+    console.log("Данные очищены"); //для проверки
   }
 
   validateData(): Partial<IErrors> {
     const errors: Partial<IErrors> = {};
-
     if (this.data.payment === "") {
       errors.payment = "Не выбран способ оплаты";
     }

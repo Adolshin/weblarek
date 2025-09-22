@@ -9,19 +9,22 @@ export class Cart {
     return this.products;
   }
 
-  addProduct(product: IProduct|undefined): void {
+  addProduct(product: IProduct | undefined): void {
     if (product && !this.checkProduct(product.id)) {
       this.products.push(product);
+      console.log("Товар добавлен"); //для проверки
     }
   }
 
   deleteProduct(id: string): void {
-    let updatedProducts = this.products.filter((product) => product.id !== id);
+    const updatedProducts = this.products.filter((product) => product.id !== id);
     this.products = updatedProducts;
+    console.log("Товар удаален"); //для проверки
   }
 
   clearCart(): void {
     this.products = [];
+    console.log("Корзина очищена"); //для проверки
   }
 
   getTotalPrice(): number {
