@@ -12,17 +12,22 @@ export class Catalog {
   getProducts(): IProduct[] {
     return this.products;
   }
+  getProductById(id: string): IProduct|undefined{
+    const item = this.products.find((product) => product.id === id);
+    if (item?.id) {
+      return item
+    } else {
+      console.log('Товара с таким id не сущестует')     
+    }
+     
+  }
 
   setProduct(id: string): void{
-    const product = this.products.find((product) => product.id === id);
+    const product = this.getProductById(id);
     this.product = product
     
   }
   getProduct(): IProduct | undefined {
     return this.product;
-  }
-  
-  getProductById(id: string): IProduct|undefined{
-    return this.products.find((product) => product.id === id);
-  }
+  } 
 }

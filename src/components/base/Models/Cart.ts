@@ -5,22 +5,23 @@ export class Cart {
 
   constructor() {}
 
-  addProduct(product: IProduct): void {
-    if (!this.checkProduct(product.id)) {
+  getProducts(): IProduct[] {
+    return this.products;
+  }
+
+  addProduct(product: IProduct|undefined): void {
+    if (product && !this.checkProduct(product.id)) {
       this.products.push(product);
     }
   }
+
   deleteProduct(id: string): void {
     let updatedProducts = this.products.filter((product) => product.id !== id);
     this.products = updatedProducts;
   }
 
-  getProducts(): IProduct[] {
-    return this.products;
-  }
-
-  getProductQuantity(): number {
-    return this.products.length;
+  clearCart(): void {
+    this.products = [];
   }
 
   getTotalPrice(): number {
@@ -30,15 +31,16 @@ export class Cart {
     });
     return total;
   }
+
+  getProductQuantity(): number {
+    return this.products.length;
+  }
+
   checkProduct(id: string): boolean {
     if (this.products.find((product) => product.id === id)) {
       return true;
     } else {
       return false;
     }
-  }
-
-  clear():void {
-    this.products = []
   }
 }

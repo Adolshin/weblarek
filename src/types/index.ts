@@ -14,21 +14,16 @@ export interface IProduct {
   price: number | null;
 }
 
-export type Payment = "cash" | "card" | ""; 
-
-export interface IBuyer {
-  payment: Payment;
+export interface IBuyer {  
+  payment: "cash" | "card" | "";
   email: string;
   phone: string;
   address: string;
 }
 
-
-export type Errors = {
+export interface IErrors extends Omit<IBuyer, 'payment'>  {
   payment: string;
-  email: string;
-  phone: string;
-  address: string;
 };
+
 
 
