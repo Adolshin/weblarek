@@ -1,5 +1,5 @@
-import { IBuyer } from "../../../types/index.ts";
-import { IErrors } from "../../../types/index.ts";
+import { IBuyer } from "../../types/index.ts";
+import { IErrors } from "../../types/index.ts";
 
 export class Buyer {
   protected data: IBuyer = {
