@@ -1,4 +1,4 @@
-import { IApi, IProduct, IData, IOrder, IOrderResponse } from "../../types/index.ts";
+import { IApi, IProduct, IProductListResponse, IOrder, IOrderResponse } from "../../types/index.ts";
 
 export class WeblarekApi {
   constructor(protected baseApi: IApi) {
@@ -6,7 +6,7 @@ export class WeblarekApi {
   }
 
   getProductList():Promise<IProduct[]> {
-    return this.baseApi.get<IData>("/product/").then((data) => {
+    return this.baseApi.get<IProductListResponse>("/product/").then((data) => {
       return data.items;
     });
   }

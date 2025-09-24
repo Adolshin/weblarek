@@ -25,7 +25,7 @@ export interface IErrors extends Omit<IBuyer, "payment"> {
   payment: string;
 }
 
-export interface IData {
+export interface IProductListResponse {
   total: number;
   items: IProduct[];
 }

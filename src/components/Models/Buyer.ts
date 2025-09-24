@@ -9,13 +9,11 @@ export class Buyer {
     address: "",
   };
 
-  constructor() {}
-
   setData(userData: Partial<IBuyer>): void {
-    const mergedObject = Object.assign({}, this.data, userData);
-    this.data = mergedObject;
-    const keys = Object.keys(userData).toString(); //для проверки
-    console.log(keys, "изменено"); //для проверки
+    this.data = {
+      ...this.data,
+      ...userData,
+    };
   }
 
   getData(): IBuyer {
@@ -26,7 +24,6 @@ export class Buyer {
     Object.keys(this.data).forEach((key) => {
       this.data[key as keyof IBuyer] = "";
     });
-    console.log("Данные очищены"); //для проверки
   }
 
   validateData(): Partial<IErrors> {

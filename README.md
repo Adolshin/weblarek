@@ -162,10 +162,10 @@ interface IErrors extends Omit<IBuyer, 'payment'>  {
 }
 ```
 
-Интерфейс IData, описывает тип объекта возвращаемого в промисе сервером, включает в себя массив объектов типа IProduct и кол-во таких объектов в массиве
+Интерфейс IProductListResponse, описывает тип объекта возвращаемого в промисе сервером, включает в себя массив объектов типа IProduct и кол-во таких объектов в массиве
 
 ```
-interface IData {
+interface IProductListResponse {
   total: number;
   items: IProduct[];
 }
