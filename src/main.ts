@@ -3,10 +3,10 @@ import { Catalog } from "./components/Models/Catalog.ts";
 import { Cart } from "./components/Models/Cart.ts";
 import { Buyer } from "./components/Models/Buyer.ts";
 import { apiProducts } from "./utils/data.ts";
-import { API_URL, CDN_URL, settings } from "./utils/constants.ts";
+import { API_URL } from "./utils/constants.ts";
 import { Api } from "./components/base/Api.ts";
 import { WeblarekApi } from "./components/Communication/WeblarekApi.ts";
-import { IData } from "./types/index.ts";
+
 
 const catalog = new Catalog();
 console.log("%cПроверка класса Catalog", "font-weight: bold;");
@@ -51,7 +51,7 @@ console.log("Ошибки валидации", user.validateData());
 console.log("");
 
 console.log("%cПроверка класса WeblarekApi", "font-weight: bold;");
-const BaseApi = new Api(API_URL, settings);
+const BaseApi = new Api(API_URL);
 const getData = new WeblarekApi(BaseApi);
 
 getData.get().then((data) => {
@@ -68,9 +68,9 @@ getData.get().then((data) => {
   user.setData({ payment: "online", email: "test@test.ru", phone: "+71234567890", address: "Spb Vosstania 1" });
   const buyer = user.getData();
   const order = { ...buyer, ...total, ...items };
-  getData.post(order).then((data: any) => {
+  getData.post(order).then((data) => {
     console.log("Ответ сервера", data);
   });
 });
 
-// getData.get("/product/")
+

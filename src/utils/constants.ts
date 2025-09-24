@@ -7,8 +7,6 @@ export const API_URL = `${import.meta.env.VITE_API_ORIGIN}/api/weblarek`;
 export const CDN_URL = `${import.meta.env.VITE_API_ORIGIN}/content/weblarek`;
 
 export const settings = {
- headers: {
-    authorization: "515ed3f0-64e3-49c6-80e8-8e6a14a63a3c",    
-  },
+
 };
 
