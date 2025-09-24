@@ -5,21 +5,23 @@ export class Cart {
 
   constructor() {}
 
-  getProducts(): IProduct[] {
+  getProductList(): IProduct[] {
     return this.products;
   }
 
   addProduct(product: IProduct | undefined): void {
     if (product && !this.checkProduct(product.id)) {
       this.products.push(product);
-      console.log("Товар добавлен"); //для проверки
+      console.log("Товар добавлен а корзину"); //для проверки
+    } else if (product && this.checkProduct(product.id)) {
+      console.log("Товар с таким id уже есть в корзине"); //для проверки
     }
   }
 
   deleteProduct(id: string): void {
     const updatedProducts = this.products.filter((product) => product.id !== id);
     this.products = updatedProducts;
-    console.log("Товар удаален"); //для проверки
+    console.log("Товар удаален из корзины"); //для проверки
   }
 
   clearCart(): void {

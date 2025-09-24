@@ -1,20 +1,20 @@
 import { IProduct } from "../../types/index.ts";
 
 export class Catalog {
-  protected products: IProduct[] = [];
+  protected productList: IProduct[] = [];
   protected product?: IProduct;
   constructor() {}
 
-  setProducts(data: IProduct[]): void {
-    this.products = data;
-    console.log("Список товаров получен"); //для проверки
+  setProductList(data: IProduct[]): void {
+    this.productList = data;
+    console.log("Массив товаров записан в хранилище"); //для проверки
   }
 
-  getProducts(): IProduct[] {
-    return this.products;
+  getProductList(): IProduct[] {
+    return this.productList;
   }
   getProductById(id: string): IProduct | undefined {
-    const item = this.products.find((product) => product.id === id);
+    const item = this.productList.find((product) => product.id === id);
     if (item) {
       return item;
     } else {

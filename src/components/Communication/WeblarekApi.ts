@@ -5,13 +5,13 @@ export class WeblarekApi {
     this.baseApi = baseApi;
   }
 
-  get(): Promise<IProduct[]> {
+  getProductList():Promise<IProduct[]> {
     return this.baseApi.get<IData>("/product/").then((data) => {
       return data.items;
     });
   }
 
-  post(data: IOrder): Promise<IOrderResponse> {
+  postOrder(data:IOrder):Promise<IOrderResponse> {
     return this.baseApi.post("/order/", data);
   }
 }

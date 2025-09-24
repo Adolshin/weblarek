@@ -14,16 +14,16 @@ export interface IProduct {
   price: number | null;
 }
 
-export interface IBuyer {  
+export interface IBuyer {
   payment: "cash" | "online" | "";
   email: string;
   phone: string;
   address: string;
 }
 
-export interface IErrors extends Omit<IBuyer, 'payment'>  {
+export interface IErrors extends Omit<IBuyer, "payment"> {
   payment: string;
-};
+}
 
 export interface IData {
   total: number;
@@ -39,6 +39,3 @@ export interface IOrderResponse {
   id: string;
   total: number;
 }
-
-
-
