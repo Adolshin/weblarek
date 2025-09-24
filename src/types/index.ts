@@ -15,7 +15,7 @@ export interface IProduct {
 }
 
 export interface IBuyer {  
-  payment: "cash" | "card" | "";
+  payment: "cash" | "online" | "";
   email: string;
   phone: string;
   address: string;
@@ -24,6 +24,21 @@ export interface IBuyer {
 export interface IErrors extends Omit<IBuyer, 'payment'>  {
   payment: string;
 };
+
+export interface IData {
+  total: number;
+  items: IProduct[];
+}
+
+export interface IOrder extends IBuyer {
+  total: number;
+  items: string[];
+}
+
+export interface IOrderResponse {
+  id: string;
+  total: number;
+}
 
 
 
