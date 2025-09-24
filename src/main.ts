@@ -28,7 +28,7 @@ cart.deleteProduct("854cef69-976d-4c2a-a18c-2aa45046c390");
 console.log("Массив товаров добавленных в корзину", cart.getProductList());
 console.log("Общая стоимость товаров", cart.getTotalPrice());
 console.log("Количество товаров", cart.getProductQuantity());
-console.log("Наличие товара в корзине", cart.checkProduct("b06cde61-912f-4663-9751-09956c0eed67"));
+console.log("Наличие товара в корзине", cart.checkProduct("c101ab44-ed99-4a54-990d-47aa2bb4e7d9"));
 cart.clearCart();
 console.log("Массив товаров добавленных в корзину", cart.getProductList());
 console.log("");
