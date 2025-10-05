@@ -1,26 +1,28 @@
 import { IApi, IProduct, IProductListResponse, IOrder, IOrderResponse } from "../../types/index.ts";
 
+
 export class WeblarekApi {
-  constructor(protected baseApi: IApi) {
+  constructor(protected baseApi: IApi, protected cdn: string) {
     this.baseApi = baseApi;
+    this.cdn = cdn;
   }
 
-  getProductList():Promise<IProduct[]> {
-    return this.baseApi.get<IProductListResponse>("/product/").then((data) => {
-      return data.items;
-    });
-  }
-  //   getProductList(): Promise<IData> {
-  //   return this.apiClient.get<IData>('/product/').then((data) => ({
-  //     ...data,
-  //     items: data.items.map((item) => ({
-  //       ...item,
-  //       image: this.cdn + item.image,
-  //     })),
-  //   }));
+  // getProductList():Promise<IProduct[]> {
+  //   return this.baseApi.get<IProductListResponse>("/product/").then((data) => {
+  //     return data.items;
+  //   });
   // }
+  getProductList(): Promise<IProduct[]> {
+    return this.baseApi.get<IProductListResponse>("/product/").then((data) => ({
+      ...data,
+      items: data.items.map((item) => ({
+        ...item,
+        image: this.cdn + item.image,
+      })),
+    }.items));
+  }
 
-  postOrder(data:IOrder):Promise<IOrderResponse> {
+  postOrder(data: IOrder): Promise<IOrderResponse> {
     return this.baseApi.post("/order/", data);
   }
 }

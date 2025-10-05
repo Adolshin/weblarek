@@ -3,9 +3,11 @@ import { Catalog } from "./components/Models/Catalog.ts";
 import { Cart } from "./components/Models/Cart.ts";
 import { Buyer } from "./components/Models/Buyer.ts";
 import { apiProducts } from "./utils/data.ts";
-import { API_URL } from "./utils/constants.ts";
+import { API_URL, CDN_URL } from "./utils/constants.ts";
 import { Api } from "./components/base/Api.ts";
 import { WeblarekApi } from "./components/Communication/WeblarekApi.ts";
+
+import { Header } from "./components/Views/Header.ts";
 
 const catalog = new Catalog();
 console.log("%cПроверка класса Catalog", "font-weight: bold;");
@@ -53,8 +55,8 @@ console.log("");
 console.log("%cПроверка класса WeblarekApi", "font-weight: bold;");
 
 const BaseApi = new Api(API_URL);
-const weblarek = new WeblarekApi(BaseApi);
-
+const weblarek = new WeblarekApi(BaseApi, CDN_URL);
+const header = new Header();
 weblarek.getProductList().then((data) => {
   catalog.setProductList(data); //Записываем данные полученные с сервера в хранилище
   console.log("Массив товаров из каталога", catalog.getProductList());
@@ -62,7 +64,8 @@ weblarek.getProductList().then((data) => {
   // post запрос проверяется с использованием данных полученных из классов
   cart.addProduct(catalog.getProductById("854cef69-976d-4c2a-a18c-2aa45046c390")); //Добавляем товар в корзину
   cart.addProduct(catalog.getProductById("c101ab44-ed99-4a54-990d-47aa2bb4e7d9")); //Добавляем товар в корзину
-
+  
+  header.render({ counter: cart.getProductQuantity()})
   const total = { total: cart.getTotalPrice() }; //Обьект с ценой для post запроса
   console.log("Общая стоимость товаров", total.total); //Для сверки данных о стоимости в корзине и в ответе сервера
   const items = { items: cart.getProductList().map((product) => product.id) }; //Обьект с id товаров для post запоса
@@ -74,3 +77,15 @@ weblarek.getProductList().then((data) => {
     console.log("Ответ сервера", data);
   });
 });
+
+// setTimeout(() => {
+//   console.log("");
+//   console.log("");
+//   const header = new Header();
+//   console.log(header);
+//   // header.renderHeader({counter: 7})
+//   // header.renderHeader({logo: 7})
+//   // header.renderHeader({logo: 10, counter: 17})
+//   header.render({ counter: 17})
+//   console.log(header);
+// }, 100);
