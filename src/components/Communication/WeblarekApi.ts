@@ -10,6 +10,15 @@ export class WeblarekApi {
       return data.items;
     });
   }
+  //   getProductList(): Promise<IData> {
+  //   return this.apiClient.get<IData>('/product/').then((data) => ({
+  //     ...data,
+  //     items: data.items.map((item) => ({
+  //       ...item,
+  //       image: this.cdn + item.image,
+  //     })),
+  //   }));
+  // }
 
   postOrder(data:IOrder):Promise<IOrderResponse> {
     return this.baseApi.post("/order/", data);
