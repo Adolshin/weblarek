@@ -1,37 +1,22 @@
+import { ensureElement } from "../../utils/utils.ts";
 import { Component } from "../base/Component.ts";
+import { IEvents } from "../base/Events.ts";
 
-interface IHeaderData {
+interface IHeader {
   counter: number;
-  // logo:number;
 }
 
-export class Header extends Component<IHeaderData> {
-  basketButton: HTMLButtonElement | null = null;
-  counterElement: HTMLElement | null = null;
-  logoElement: HTMLElement | null = null;
-  // counter:number = 0
-  // logo:number = 0
-  constructor() {
-    const header: HTMLElement | null = document.querySelector(".header");
-    if (header) {
-      super(header);
-    }
+export class Header extends Component<IHeader> {
+  protected basketButton: HTMLButtonElement;
+  protected counterElement: HTMLElement;
+  constructor(container: HTMLElement) {
+    super(container);
+    this.counterElement = ensureElement<HTMLElement>(".header__basket-counter", this.container);
+    this.basketButton = ensureElement<HTMLButtonElement>(".header__basket", this.container);
   }
-  set counter(value: number) {
-    this.counterElement = this.container.querySelector(".header__basket-counter");
+  protected set counter(value: number) {
     if (this.counterElement) {
       this.counterElement.textContent = `${value}`;
     }
   }
-  // renderHeader(data:Partial<IHeaderData>) {
-  //   super.render(data)
-  //   this.counterElement = this.container.querySelector(".header__basket-counter");
-  //   this.logoElement = this.container.querySelector(".header__logo");
-  //   if (this.counterElement) {
-  //     this.counterElement.textContent = `${this.counter}`;
-  //   }
-  //   if (this.logoElement) {
-  //     this.logoElement.textContent = `${this.logo}`;
-  //   }
-  // }
 }

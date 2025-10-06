@@ -6,8 +6,11 @@ import { apiProducts } from "./utils/data.ts";
 import { API_URL, CDN_URL } from "./utils/constants.ts";
 import { Api } from "./components/base/Api.ts";
 import { WeblarekApi } from "./components/Communication/WeblarekApi.ts";
+import { ensureElement } from "./utils/utils.ts";
 
+import { Gallery } from "./components/Views/Gallery.ts";
 import { Header } from "./components/Views/Header.ts";
+import { Modal } from "./components/Views/Modal.ts";
 
 const catalog = new Catalog();
 console.log("%cПроверка класса Catalog", "font-weight: bold;");
@@ -56,22 +59,42 @@ console.log("%cПроверка класса WeblarekApi", "font-weight: bold;")
 
 const BaseApi = new Api(API_URL);
 const weblarek = new WeblarekApi(BaseApi, CDN_URL);
-const header = new Header();
+
+const header = new Header(ensureElement<HTMLElement>(".header"));
+const gallery = new Gallery(ensureElement<HTMLElement>(".gallery"));
+const modal = new Modal(ensureElement<HTMLElement>(".modal"));
+
 weblarek.getProductList().then((data) => {
   catalog.setProductList(data); //Записываем данные полученные с сервера в хранилище
   console.log("Массив товаров из каталога", catalog.getProductList());
-
   // post запрос проверяется с использованием данных полученных из классов
   cart.addProduct(catalog.getProductById("854cef69-976d-4c2a-a18c-2aa45046c390")); //Добавляем товар в корзину
   cart.addProduct(catalog.getProductById("c101ab44-ed99-4a54-990d-47aa2bb4e7d9")); //Добавляем товар в корзину
-  
-  header.render({ counter: cart.getProductQuantity()})
   const total = { total: cart.getTotalPrice() }; //Обьект с ценой для post запроса
   console.log("Общая стоимость товаров", total.total); //Для сверки данных о стоимости в корзине и в ответе сервера
   const items = { items: cart.getProductList().map((product) => product.id) }; //Обьект с id товаров для post запоса
   user.setData({ payment: "online", email: "test@test.ru", phone: "+71234567890", address: "Spb Vosstania 1" }); //Записываем данные покупателя
   const buyer = user.getData(); //Получаем данные покупателя для post запроса
   const order = { ...buyer, ...total, ...items }; //Собираем общий объект для post запроса
+
+  header.render({ counter: cart.getProductQuantity() });
+
+  const x: HTMLElement[] = catalog.getProductList().map((item) => {
+    const listItem = document.createElement("li");
+    listItem.textContent = `${item.id}`;
+    console.log(listItem);
+    return listItem;
+  });
+  const y: HTMLElement = document.createElement("li")
+    
+   
+  
+  console.log(x);
+  gallery.render({ catalog: x });
+  modal.render({ content: y });
+  modal.openModal()
+  modal.closeModal()
+
 
   weblarek.postOrder(order).then((data) => {
     console.log("Ответ сервера", data);
@@ -82,10 +105,7 @@ weblarek.getProductList().then((data) => {
 //   console.log("");
 //   console.log("");
 //   const header = new Header();
+//   const gallery = new Gallery();
 //   console.log(header);
-//   // header.renderHeader({counter: 7})
-//   // header.renderHeader({logo: 7})
-//   // header.renderHeader({logo: 10, counter: 17})
-//   header.render({ counter: 17})
-//   console.log(header);
+//   console.log(gallery);
 // }, 100);
