@@ -16,9 +16,7 @@ export class Modal extends Component<IModal> {
   }
 
   protected set content(item: HTMLElement) {
-    if (this.contentElement) {
-      this.contentElement.replaceChildren(item);
-    }
+    this.contentElement.replaceChildren(item);
   }
   closeModal() {
     this.container.classList.remove("modal_active");
@@ -26,5 +24,4 @@ export class Modal extends Component<IModal> {
   openModal() {
     this.container.classList.add("modal_active");
   }
-
 }
