@@ -2,7 +2,6 @@ import "./scss/styles.scss";
 import { Catalog } from "./components/Models/Catalog.ts";
 import { Cart } from "./components/Models/Cart.ts";
 import { Buyer } from "./components/Models/Buyer.ts";
-import { apiProducts } from "./utils/data.ts";
 import { API_URL, CDN_URL } from "./utils/constants.ts";
 import { Api } from "./components/base/Api.ts";
 import { EventEmitter } from "./components/base/Events.ts";
@@ -31,7 +30,7 @@ const modal = new Modal(ensureElement<HTMLElement>(".modal"));
 events.on("basket:open", () => {
   modal.openModal();
 });
-console.log(events);
+
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>("#card-catalog");
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>("#card-preview");
 console.log(cardCatalogTemplate);
@@ -63,7 +62,6 @@ weblarek.getProductList().then((data) => {
   catalog.setProductList(data); //Записываем данные полученные с сервера в хранилище
   console.log("Массив товаров из каталога", catalog.getProductList());
   console.log(catalog);
-
   cart.addProduct(catalog.getProductById("854cef69-976d-4c2a-a18c-2aa45046c390"));
   cart.addProduct(catalog.getProductById("c101ab44-ed99-4a54-990d-47aa2bb4e7d9"));
   const total = { total: cart.getTotalPrice() }; //Обьект с ценой для post запроса
@@ -78,16 +76,5 @@ weblarek.getProductList().then((data) => {
 
   header.render({ counter: cart.getProductQuantity() });
 
-  // catalog.setProduct("854cef69-976d-4c2a-a18c-2aa45046c390");
-  // const cardData = catalog.getProduct();
-  // console.log(cardData?.id);
 
-  // const card = () => {
-  //   const card = new CardPreview(new EventEmitter(), cloneTemplate(cardPreviewTemplate));
-  //   return card.render(cardData);
-  // };
-
-  // modal.render({ content: card() });
-  // modal.openModal();
-  // modal.closeModal();
 });
