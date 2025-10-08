@@ -8,11 +8,11 @@ interface ICardActions {
   onClick(): IEvents;
 }
 type CategoryKey = keyof typeof categoryMap;
-// export type TCardCatalog = Pick<IProduct, "image" | "category">;
-// export type TCardPreview = Pick<IProduct, "image" | "category" | "description">;
-// export type TCard = Pick<IProduct, "title" | "category">;
+export type TCardPreview = Pick<IProduct, "description">;
+export type TCard = Pick<IProduct, "title" | "price">;
+export type TCardFull = Pick<IProduct, "image" | "category">;
 
-abstract class Card extends Component<IProduct> {
+abstract class Card<T> extends Component<TCard & T> {
   protected titleElement: HTMLElement;
   protected priceElement: HTMLElement;
   constructor(container: HTMLElement) {
@@ -25,55 +25,48 @@ abstract class Card extends Component<IProduct> {
   }
 
   protected set price(value: number) {
-    this.priceElement.textContent = `${value}`;
+    this.priceElement.textContent = `${value} синапсов`;
   }
 }
 
-export class CardCatalog extends Card {
+export class CardFull<T = {}> extends Card<TCardFull&T> {
   protected categoryElement: HTMLElement;
   protected imageElement: HTMLImageElement;
-  constructor(container: HTMLElement, actions?: ICardActions) {
+  constructor(container: HTMLElement) {
     super(container);
     this.categoryElement = ensureElement<HTMLElement>(".card__category", this.container);
     this.imageElement = ensureElement<HTMLImageElement>(".card__image", this.container);
-    if (actions?.onClick) {
-      this.container.addEventListener("click", actions.onClick);
-    }
   }
-  set category(value: string) {
+  protected set category(value: string) {
     this.categoryElement.textContent = value;
     for (const key in categoryMap) {
       this.categoryElement.classList.toggle(categoryMap[key as CategoryKey], key === value);
     }
   }
-  set image(value: string) {
+  protected set image(value: string) {
     this.setImage(this.imageElement, value, this.title);
   }
 }
 
-export class CardPreview extends Card {
-  protected categoryElement: HTMLElement;
-  protected imageElement: HTMLImageElement;
+export class CardCatalog extends CardFull {
+  constructor(container: HTMLElement, actions?: ICardActions) {
+    super(container);   
+    if (actions?.onClick) {
+      this.container.addEventListener("click", actions.onClick);
+    }
+  }
+}
+
+export class CardPreview extends CardFull<TCardPreview> { 
   protected descriptionElement: HTMLElement;
   protected buttonElement: HTMLButtonElement;
   constructor(protected events: IEvents, container: HTMLElement) {
-    super(container);
-    this.categoryElement = ensureElement<HTMLElement>(".card__category", this.container);
-    this.imageElement = ensureElement<HTMLImageElement>(".card__image", this.container);
+    super(container);   
     this.descriptionElement = ensureElement<HTMLImageElement>(".card__text", this.container);
     this.buttonElement = ensureElement<HTMLButtonElement>(".card__button", this.container);
     this.buttonElement.addEventListener("click", () => {
       this.events.emit("basket:add");
     });
-  }
-  set category(value: string) {
-    this.categoryElement.textContent = value;
-    for (const key in categoryMap) {
-      this.categoryElement.classList.toggle(categoryMap[key as CategoryKey], key === value);
-    }
-  }
-  set image(value: string) {
-    this.setImage(this.imageElement, value, this.title);
   }
   set description(value: string) {
     this.descriptionElement.textContent = value;
