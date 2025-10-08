@@ -17,7 +17,7 @@ export class WeblarekApi {
       ...data,
       items: data.items.map((item) => ({
         ...item,
-        image: this.cdn + item.image,
+        image: this.cdn + item.image.replaceAll("svg", "png"),
       })),
     }.items));
   }

@@ -5,7 +5,7 @@ import { IProduct } from "../../types/index.ts";
 import { categoryMap } from "../../utils/constants.ts";
 
 interface ICardActions {
-  onClick(): IEvents;
+  onClick(): void;
 }
 type CategoryKey = keyof typeof categoryMap;
 export type TCardPreview = Pick<IProduct, "description">;

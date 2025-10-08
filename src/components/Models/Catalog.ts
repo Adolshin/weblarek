@@ -27,6 +27,7 @@ export class Catalog {
   setProduct(id: string): void {
     const product = this.getProductById(id);
     this.product = product;
+    this.events.emit("selectedCard:changed");
   }
   getProduct(): IProduct | undefined {
     return this.product;
