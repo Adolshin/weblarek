@@ -14,32 +14,49 @@ import { Gallery } from "./components/Views/Gallery.ts";
 import { Header } from "./components/Views/Header.ts";
 import { Modal } from "./components/Views/Modal.ts";
 import { CardCatalog, CardPreview } from "./components/Views/Cards.ts";
+import { IProduct } from "./types/index.ts";
 
-const catalog = new Catalog(new EventEmitter());
 const cart = new Cart();
 let buyer = new Buyer();
 
 const BaseApi = new Api(API_URL);
 const weblarek = new WeblarekApi(BaseApi, CDN_URL);
-
-const header = new Header(new EventEmitter(), ensureElement<HTMLElement>(".header"));
-const gallery = new Gallery(ensureElement<HTMLElement>(".gallery"));
-const modal = new Modal(ensureElement<HTMLElement>(".modal"));
 const events = new EventEmitter();
 
+const header = new Header(events, ensureElement<HTMLElement>(".header"));
+const catalog = new Catalog(events);
+const gallery = new Gallery(ensureElement<HTMLElement>(".gallery"));
+const modal = new Modal(ensureElement<HTMLElement>(".modal"));
 
- header.render({ counter: cart.getProductQuantity() });
-
-  const cardCatalogTemplate = ensureElement<HTMLTemplateElement>("#card-catalog");
-  const cardPreviewTemplate = ensureElement<HTMLTemplateElement>("#card-preview");
-  console.log(cardCatalogTemplate);
+events.on("basket:open", () => {
+  modal.openModal();
+});
+console.log(events);
+const cardCatalogTemplate = ensureElement<HTMLTemplateElement>("#card-catalog");
+const cardPreviewTemplate = ensureElement<HTMLTemplateElement>("#card-preview");
+console.log(cardCatalogTemplate);
 
 events.on("catalog:changed", () => {
   const cards = catalog.getProductList().map((item) => {
-    const card = new CardCatalog(cloneTemplate(cardCatalogTemplate));
+    const card = new CardCatalog(cloneTemplate(cardCatalogTemplate), {
+      onClick: () => events.emit("card:select", item),
+    });
     return card.render(item);
   });
   gallery.render({ catalog: cards });
+});
+
+events.on<IProduct>("card:select", (item) => {
+  catalog.setProduct(item.id);
+});
+
+events.on("selectedCard:changed", () => {
+  const card = () => {
+    const card = new CardPreview(events, cloneTemplate(cardPreviewTemplate));
+    return card.render(catalog.getProduct());
+  };
+  modal.render({ content: card() });
+  modal.openModal();
 });
 
 weblarek.getProductList().then((data) => {
@@ -59,18 +76,7 @@ weblarek.getProductList().then((data) => {
     console.log("Ответ сервера", data);
   });
 
-  // header.render({ counter: cart.getProductQuantity() });
-
-  // const cardCatalogTemplate = ensureElement<HTMLTemplateElement>("#card-catalog");
-  // const cardPreviewTemplate = ensureElement<HTMLTemplateElement>("#card-preview");
-  // console.log(cardCatalogTemplate);
-
-  
-  // const cards = catalog.getProductList().map((item) => {
-  //   const card = new CardCatalog(cloneTemplate(cardCatalogTemplate));
-  //   return card.render(item);
-  // });
-  // gallery.render({ catalog: cards });
+  header.render({ counter: cart.getProductQuantity() });
 
   // catalog.setProduct("854cef69-976d-4c2a-a18c-2aa45046c390");
   // const cardData = catalog.getProduct();
