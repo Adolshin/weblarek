@@ -21,10 +21,10 @@ export class Modal extends Component<IModal> {
   }
   closeModal() {
     this.container.classList.remove("modal_active");
-    this.pageContainer.classList.remove("page__wrapper_locked");
+    this.pageContainer.classList.remove("page_locked");
   }
   openModal() {
     this.container.classList.add("modal_active");
-    this.pageContainer.classList.add("page__wrapper_locked");
+    this.pageContainer.classList.add("page_locked");
   }
 }

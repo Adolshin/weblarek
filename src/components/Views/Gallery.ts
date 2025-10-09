@@ -2,16 +2,16 @@ import { Component } from "../base/Component.ts";
 
 
 interface IGallery {
-  catalog: HTMLElement[];
+  content: HTMLElement[];
 }
 
 export class Gallery extends Component<IGallery> {
-  protected catalogElement: HTMLElement;
+  protected contentElement: HTMLElement;
   constructor(container: HTMLElement) {
     super(container);
-    this.catalogElement = this.container;
+    this.contentElement = this.container;
   }
-  protected set catalog(items: HTMLElement[]) {
-    this.catalogElement.replaceChildren(...items);
+  protected set content(items: HTMLElement[]) {
+    this.contentElement.replaceChildren(...items);
   }
 }

@@ -14,6 +14,7 @@ import { Buyer } from "./components/Models/Buyer.ts";
 import { Header } from "./components/Views/Header.ts";
 import { Gallery } from "./components/Views/Gallery.ts";
 import { Modal } from "./components/Views/Modal.ts";
+import { Basket } from "./components/Views/Basket.ts";
 import { CardCatalog, CardPreview, CardBasket } from "./components/Views/Cards/Cards.ts";
 
 const BaseApi = new Api(API_URL);
@@ -26,15 +27,12 @@ const buyer = new Buyer();
 
 const header = new Header(events, ensureElement<HTMLElement>(".header"));
 const gallery = new Gallery(ensureElement<HTMLElement>(".gallery"));
-const modal = new Modal(ensureElement<HTMLElement>(".modal"), ensureElement<HTMLElement>(".page__wrapper"));
+const modal = new Modal(ensureElement<HTMLElement>(".modal"), ensureElement<HTMLElement>(".page"));
 
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>("#card-catalog");
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>("#card-preview");
 const cardBasketTemplate = ensureElement<HTMLTemplateElement>("#card-basket");
-
-events.on("basket:open", () => {
-  modal.openModal();
-});
+const basketTemplate = ensureElement<HTMLTemplateElement>("#basket");
 
 events.on("catalog:changed", () => {
   const cards = catalog.getProductList().map((item) => {
@@ -43,8 +41,7 @@ events.on("catalog:changed", () => {
     });
     return card.render(item);
   });
-  console.log(cards)
-  gallery.render({ catalog: cards });
+  gallery.render({ content: cards });
 });
 
 events.on<IProduct>("card:select", (item) => {
@@ -65,14 +62,20 @@ events.on("basket:add", () => {
 });
 
 events.on("basket:changed", () => {
+  header.render({ counter: cart.getProductQuantity() });
+});
+
+events.on("basket:open", () => {
   const basketList = cart.getProductList().map((item) => {
     const card = new CardBasket(events, cloneTemplate(cardBasketTemplate));
     return card.render(item);
   });
-  console.log(basketList)
-
-  header.render({ counter: cart.getProductQuantity() });
-  // modal.render({ content: basketList });
+  const basketContent = () => {
+    const basket = new Basket(events, cloneTemplate(basketTemplate));
+    return basket.render({ content: basketList });
+  };  
+  modal.render({ content: basketContent() });
+  modal.openModal();
 });
 
 weblarek.getProductList().then((data) => {
