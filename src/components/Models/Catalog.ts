@@ -3,9 +3,8 @@ import { IEvents } from "../base/Events.ts";
 
 export class Catalog {
   protected productList: IProduct[] = [];
-  protected product?: IProduct;
-  events: IEvents;
-  constructor(events: IEvents) {
+  protected product?: IProduct;  
+  constructor(protected events: IEvents) {
     this.events = events
   }
 

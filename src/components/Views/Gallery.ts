@@ -1,6 +1,5 @@
-import { ensureElement } from "../../utils/utils.ts";
 import { Component } from "../base/Component.ts";
-import { IEvents } from "../base/Events.ts";
+
 
 interface IGallery {
   catalog: HTMLElement[];
