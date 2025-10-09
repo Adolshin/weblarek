@@ -5,7 +5,7 @@ import { categoryMap } from "../../../utils/constants.ts";
 
 
 type CategoryKey = keyof typeof categoryMap;
-type TCard = Pick<IProduct, "title" | "price">;
+export type TCard = Pick<IProduct, "title" | "price">;
 type TCardFull = Pick<IProduct, "image" | "category">;
 
 export abstract class Card<T> extends Component<TCard & T> {

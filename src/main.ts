@@ -65,17 +65,37 @@ events.on("basket:changed", () => {
   header.render({ counter: cart.getProductQuantity() });
 });
 
+// const basketRender = () => {
+//   const basketList = cart.getProductList().map((item, index) => {
+//     const card = new CardBasket(cloneTemplate(cardBasketTemplate), {
+//       onClick: () => events.emit("basket:remove", item),
+//     });
+//     return card.render(Object.assign(item, { index: index + 1 }));
+//   });
+//   const basketContent = () => {
+//     const basket = new Basket(events, cloneTemplate(basketTemplate));
+//     return basket.render({ content: basketList });
+//   };
+//   return basketContent()
+// };
+
 events.on("basket:open", () => {
-  const basketList = cart.getProductList().map((item) => {
-    const card = new CardBasket(events, cloneTemplate(cardBasketTemplate));
-    return card.render(item);
+  const basketList = cart.getProductList().map((item, index) => {
+    const card = new CardBasket(cloneTemplate(cardBasketTemplate), {
+      onClick: () => events.emit("basket:remove", item),
+    });
+    return card.render(Object.assign(item, { index: index + 1 }));
   });
   const basketContent = () => {
     const basket = new Basket(events, cloneTemplate(basketTemplate));
     return basket.render({ content: basketList });
-  };  
+  };
   modal.render({ content: basketContent() });
   modal.openModal();
+});
+
+events.on<IProduct>("basket:remove", (item) => {
+  cart.deleteProduct(item.id);
 });
 
 weblarek.getProductList().then((data) => {

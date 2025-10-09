@@ -20,6 +20,7 @@ export class Cart {
   deleteProduct(id: string): void {
     const updatedProductList = this.productList.filter((product) => product.id !== id);
     this.productList = updatedProductList;
+    this.events.emit("basket:changed");
   }
 
   clearCart(): void {
