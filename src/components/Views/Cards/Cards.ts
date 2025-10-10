@@ -20,7 +20,7 @@ export class CardCatalog extends CardFull {
 
 export class CardPreview extends CardFull<TCardPreview> {
   protected descriptionElement: HTMLElement;
-  buttonElement: HTMLButtonElement;
+  protected buttonElement: HTMLButtonElement;
   constructor(container: HTMLElement, actions?: ICardActions) {
     super(container);
     this.descriptionElement = ensureElement<HTMLImageElement>(".card__text", this.container);
@@ -32,14 +32,18 @@ export class CardPreview extends CardFull<TCardPreview> {
   protected set description(value: string) {
     this.descriptionElement.textContent = value;
   }
-  // setDisabled(value: boolean) {
-  //   if (value) {
-  //     this.buttonElement.setAttribute("disabled", "");
-  //     this.buttonElement.textContent = "Недоступно";
-  //   }else {
-  //     return
-  //   }
-  // }
+  renderButton(inBasket: boolean, hasPrice: boolean = true) {
+    if (!hasPrice) {
+      this.buttonElement.setAttribute("disabled", "");
+      this.buttonElement.textContent = "Недоступно";
+    } else if (hasPrice && !inBasket) {
+      this.buttonElement.removeAttribute("disabled");
+      this.buttonElement.textContent = "Купить";
+    } else if (hasPrice && inBasket) {
+      this.buttonElement.textContent = "Удалить из корзины";
+      this.buttonElement.removeAttribute("disabled");
+    }
+  }
 }
 
 export class CardBasket extends Card<TCardBasket> {

@@ -37,7 +37,8 @@ const basket = new Basket(events, cloneTemplate(basketTemplate));
 
 const cardPreview = new CardPreview(cloneTemplate(cardPreviewTemplate), {
   onClick: () => {
-    const inBasket = cart.checkProduct(catalog.getProduct()?.id);
+    const activeCard = catalog.getProduct();
+    const inBasket = cart.checkProduct(activeCard?.id);
     if (!inBasket) {
       events.emit("basket:add");
     } else {
@@ -63,19 +64,8 @@ events.on<IProduct>("card:select", (item) => {
 events.on("selectedCard:changed", () => {
   const activeCard = catalog.getProduct();
   const inBasket = cart.checkProduct(activeCard?.id);
-  const unavailable = activeCard?.price === null;
-  if (!unavailable) {
-    if (!inBasket) {
-      cardPreview.buttonElement.textContent = "Купить";
-      cardPreview.buttonElement.removeAttribute("disabled");
-    } else {
-      cardPreview.buttonElement.textContent = "Удалить из корзины";
-      cardPreview.buttonElement.removeAttribute("disabled");
-    }
-  } else {
-    cardPreview.buttonElement.setAttribute("disabled", "");
-    cardPreview.buttonElement.textContent = "Недоступно";
-  }
+  const hasPrice = activeCard?.price !== null;
+  cardPreview.renderButton(inBasket, hasPrice);
   modal.render({ content: cardPreview.render(activeCard) });
   modal.openModal();
 });
@@ -92,18 +82,15 @@ events.on("basket:changed", () => {
   header.render({ counter: cart.getProductQuantity() });
   const activeCard = catalog.getProduct();
   const inBasket = cart.checkProduct(activeCard?.id);
-  if (!inBasket) {
-    cardPreview.buttonElement.textContent = "Купить";
-  } else {
-    cardPreview.buttonElement.textContent = "Удалить из корзины";
-  }
+  cardPreview.renderButton(inBasket);
   const basketList = cart.getProductList().map((item, index) => {
     const card = new CardBasket(cloneTemplate(cardBasketTemplate), {
       onClick: () => events.emit("basket:remove", item),
     });
     return card.render(Object.assign(item, { index: index + 1 }));
   });
-  basket.render({ content: basketList });
+  const totalPrice = cart.getTotalPrice();
+  basket.render({ content: basketList, price: totalPrice });
 });
 
 events.on("basket:open", () => {

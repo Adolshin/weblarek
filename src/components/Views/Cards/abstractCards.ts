@@ -3,7 +3,6 @@ import { Component } from "../../base/Component.ts";
 import { IProduct } from "../../../types/index.ts";
 import { categoryMap } from "../../../utils/constants.ts";
 
-
 type CategoryKey = keyof typeof categoryMap;
 export type TCard = Pick<IProduct, "title" | "price">;
 type TCardFull = Pick<IProduct, "image" | "category">;
@@ -21,11 +20,15 @@ export abstract class Card<T> extends Component<TCard & T> {
   }
 
   protected set price(value: number) {
-    this.priceElement.textContent = `${value} синапсов`;
+    if (value) {
+      this.priceElement.textContent = `${value} синапсов`;
+    } else {
+      this.priceElement.textContent = "Бесценно"
+    }
   }
 }
 
-export abstract class CardFull<T = {}> extends Card<TCardFull&T> {
+export abstract class CardFull<T = {}> extends Card<TCardFull & T> {
   protected categoryElement: HTMLElement;
   protected imageElement: HTMLImageElement;
   constructor(container: HTMLElement) {
