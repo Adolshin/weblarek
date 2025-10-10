@@ -1,5 +1,4 @@
 import { IEvents } from "../base/Events.ts";
-import { IProduct } from "../../types/index.ts";
 import { ensureElement } from "../../utils/utils.ts";
 import { Component } from "../base/Component.ts";
 

@@ -1,4 +1,3 @@
-import { IEvents } from "../../base/Events.ts";
 import { CardFullView, CardView, TCard } from "./abstractCardsViews.ts";
 import { IProduct } from "../../../types/index.ts";
 import { ensureElement } from "../../../utils/utils.ts";
