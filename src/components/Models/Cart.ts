@@ -39,7 +39,7 @@ export class Cart {
     return this.productList.length;
   }
 
-  checkProduct(id: string): boolean {
+  checkProduct(id: string | undefined): boolean {
     return this.productList.some((product) => product.id === id);
   }
 }

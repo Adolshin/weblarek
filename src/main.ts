@@ -17,6 +17,11 @@ import { Modal } from "./components/Views/Modal.ts";
 import { Basket } from "./components/Views/Basket.ts";
 import { CardCatalog, CardPreview, CardBasket } from "./components/Views/Cards/Cards.ts";
 
+const cardCatalogTemplate = ensureElement<HTMLTemplateElement>("#card-catalog");
+const cardPreviewTemplate = ensureElement<HTMLTemplateElement>("#card-preview");
+const cardBasketTemplate = ensureElement<HTMLTemplateElement>("#card-basket");
+const basketTemplate = ensureElement<HTMLTemplateElement>("#basket");
+
 const BaseApi = new Api(API_URL);
 const weblarek = new WeblarekApi(BaseApi, CDN_URL);
 const events = new EventEmitter();
@@ -28,11 +33,18 @@ const buyer = new Buyer();
 const header = new Header(events, ensureElement<HTMLElement>(".header"));
 const gallery = new Gallery(ensureElement<HTMLElement>(".gallery"));
 const modal = new Modal(ensureElement<HTMLElement>(".modal"), ensureElement<HTMLElement>(".page"));
+const basket = new Basket(events, cloneTemplate(basketTemplate));
 
-const cardCatalogTemplate = ensureElement<HTMLTemplateElement>("#card-catalog");
-const cardPreviewTemplate = ensureElement<HTMLTemplateElement>("#card-preview");
-const cardBasketTemplate = ensureElement<HTMLTemplateElement>("#card-basket");
-const basketTemplate = ensureElement<HTMLTemplateElement>("#basket");
+const cardPreview = new CardPreview(cloneTemplate(cardPreviewTemplate), {
+  onClick: () => {
+    const inBasket = cart.checkProduct(catalog.getProduct()?.id);
+    if (!inBasket) {
+      events.emit("basket:add");
+    } else {
+      events.emit("basket:remove", catalog.getProduct());
+    }
+  },
+});
 
 events.on("catalog:changed", () => {
   const cards = catalog.getProductList().map((item) => {
@@ -49,11 +61,22 @@ events.on<IProduct>("card:select", (item) => {
 });
 
 events.on("selectedCard:changed", () => {
-  const card = () => {
-    const card = new CardPreview(events, cloneTemplate(cardPreviewTemplate));
-    return card.render(catalog.getProduct());
-  };
-  modal.render({ content: card() });
+  const activeCard = catalog.getProduct();
+  const inBasket = cart.checkProduct(activeCard?.id);
+  const unavailable = activeCard?.price === null;
+  if (!unavailable) {
+    if (!inBasket) {
+      cardPreview.buttonElement.textContent = "Купить";
+      cardPreview.buttonElement.removeAttribute("disabled");
+    } else {
+      cardPreview.buttonElement.textContent = "Удалить из корзины";
+      cardPreview.buttonElement.removeAttribute("disabled");
+    }
+  } else {
+    cardPreview.buttonElement.setAttribute("disabled", "");
+    cardPreview.buttonElement.textContent = "Недоступно";
+  }
+  modal.render({ content: cardPreview.render(activeCard) });
   modal.openModal();
 });
 
@@ -61,41 +84,31 @@ events.on("basket:add", () => {
   cart.addProduct(catalog.getProduct());
 });
 
-events.on("basket:changed", () => {
-  header.render({ counter: cart.getProductQuantity() });
+events.on<IProduct>("basket:remove", (item) => {
+  cart.deleteProduct(item.id);
 });
 
-// const basketRender = () => {
-//   const basketList = cart.getProductList().map((item, index) => {
-//     const card = new CardBasket(cloneTemplate(cardBasketTemplate), {
-//       onClick: () => events.emit("basket:remove", item),
-//     });
-//     return card.render(Object.assign(item, { index: index + 1 }));
-//   });
-//   const basketContent = () => {
-//     const basket = new Basket(events, cloneTemplate(basketTemplate));
-//     return basket.render({ content: basketList });
-//   };
-//   return basketContent()
-// };
-
-events.on("basket:open", () => {
+events.on("basket:changed", () => {
+  header.render({ counter: cart.getProductQuantity() });
+  const activeCard = catalog.getProduct();
+  const inBasket = cart.checkProduct(activeCard?.id);
+  if (!inBasket) {
+    cardPreview.buttonElement.textContent = "Купить";
+  } else {
+    cardPreview.buttonElement.textContent = "Удалить из корзины";
+  }
   const basketList = cart.getProductList().map((item, index) => {
     const card = new CardBasket(cloneTemplate(cardBasketTemplate), {
       onClick: () => events.emit("basket:remove", item),
     });
     return card.render(Object.assign(item, { index: index + 1 }));
   });
-  const basketContent = () => {
-    const basket = new Basket(events, cloneTemplate(basketTemplate));
-    return basket.render({ content: basketList });
-  };
-  modal.render({ content: basketContent() });
-  modal.openModal();
+  basket.render({ content: basketList });
 });
 
-events.on<IProduct>("basket:remove", (item) => {
-  cart.deleteProduct(item.id);
+events.on("basket:open", () => {
+  modal.render({ content: basket.render() });
+  modal.openModal();
 });
 
 weblarek.getProductList().then((data) => {

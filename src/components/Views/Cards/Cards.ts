@@ -20,18 +20,26 @@ export class CardCatalog extends CardFull {
 
 export class CardPreview extends CardFull<TCardPreview> {
   protected descriptionElement: HTMLElement;
-  protected buttonElement: HTMLButtonElement;
-  constructor(protected events: IEvents, container: HTMLElement) {
+  buttonElement: HTMLButtonElement;
+  constructor(container: HTMLElement, actions?: ICardActions) {
     super(container);
     this.descriptionElement = ensureElement<HTMLImageElement>(".card__text", this.container);
     this.buttonElement = ensureElement<HTMLButtonElement>(".card__button", this.container);
-    this.buttonElement.addEventListener("click", () => {
-      this.events.emit("basket:add");
-    });
+    if (actions?.onClick) {
+      this.buttonElement.addEventListener("click", actions.onClick);
+    }
   }
   protected set description(value: string) {
     this.descriptionElement.textContent = value;
   }
+  // setDisabled(value: boolean) {
+  //   if (value) {
+  //     this.buttonElement.setAttribute("disabled", "");
+  //     this.buttonElement.textContent = "Недоступно";
+  //   }else {
+  //     return
+  //   }
+  // }
 }
 
 export class CardBasket extends Card<TCardBasket> {
