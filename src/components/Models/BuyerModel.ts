@@ -1,7 +1,7 @@
 import { IBuyer } from "../../types/index.ts";
 import { IErrors } from "../../types/index.ts";
 
-export class Buyer {
+export class BuyerModel {
   protected data: IBuyer = {
     payment: "",
     email: "",

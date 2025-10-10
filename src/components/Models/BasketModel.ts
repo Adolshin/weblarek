@@ -1,7 +1,7 @@
 import { IProduct } from "../../types/index.ts";
 import { IEvents } from "../base/Events.ts";
 
-export class Cart {
+export class BasketModel {
   protected productList: IProduct[] = [];
   constructor(protected events: IEvents) {
     this.events = events;

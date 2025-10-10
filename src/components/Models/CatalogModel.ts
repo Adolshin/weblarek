@@ -1,7 +1,7 @@
 import { IProduct } from "../../types/index.ts";
 import { IEvents } from "../base/Events.ts";
 
-export class Catalog {
+export class CatalogModel {
   protected productList: IProduct[] = [];
   protected product?: IProduct;  
   constructor(protected events: IEvents) {

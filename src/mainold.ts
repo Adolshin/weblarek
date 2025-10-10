@@ -1,7 +1,7 @@
 import "./scss/styles.scss";
-import { Catalog } from "./components/Models/Catalog.ts";
-import { Cart } from "./components/Models/Cart.ts";
-import { Buyer } from "./components/Models/Buyer.ts";
+import { Catalog } from "./components/Models/CatalogModel.ts";
+import { Cart } from "./components/Models/BasketModel.ts";
+import { Buyer } from "./components/Models/BuyerModel.ts";
 import { apiProducts } from "./utils/data.ts";
 import { API_URL, CDN_URL } from "./utils/constants.ts";
 import { Api } from "./components/base/Api.ts";
@@ -9,9 +9,9 @@ import { EventEmitter } from "./components/base/Events.ts";
 import { WeblarekApi } from "./components/Communication/WeblarekApi.ts";
 import { ensureElement } from "./utils/utils.ts";
 
-import { Gallery } from "./components/Views/Gallery.ts";
-import { Header } from "./components/Views/Header.ts";
-import { Modal } from "./components/Views/Modal.ts";
+import { Gallery } from "./components/Views/GalleryView.ts";
+import { Header } from "./components/Views/HeaderView.ts";
+import { Modal } from "./components/Views/ModalView.ts";
 
 const catalog = new Catalog();
 console.log("%cПроверка класса Catalog", "font-weight: bold;");

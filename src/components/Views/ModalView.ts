@@ -5,7 +5,7 @@ interface IModal {
   content: HTMLElement;
 }
 
-export class Modal extends Component<IModal> {
+export class ModalView extends Component<IModal> {
   protected contentElement: HTMLElement;
   protected buttonElement: HTMLButtonElement;
   constructor(container: HTMLElement, protected pageContainer: HTMLElement) {

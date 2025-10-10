@@ -7,7 +7,7 @@ type CategoryKey = keyof typeof categoryMap;
 export type TCard = Pick<IProduct, "title" | "price">;
 type TCardFull = Pick<IProduct, "image" | "category">;
 
-export abstract class Card<T> extends Component<TCard & T> {
+export abstract class CardView<T> extends Component<TCard & T> {
   protected titleElement: HTMLElement;
   protected priceElement: HTMLElement;
   constructor(container: HTMLElement) {
@@ -28,7 +28,7 @@ export abstract class Card<T> extends Component<TCard & T> {
   }
 }
 
-export abstract class CardFull<T = {}> extends Card<TCardFull & T> {
+export abstract class CardFullView<T = {}> extends CardView<TCardFull & T> {
   protected categoryElement: HTMLElement;
   protected imageElement: HTMLImageElement;
   constructor(container: HTMLElement) {

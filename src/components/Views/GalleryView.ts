@@ -5,7 +5,7 @@ interface IGallery {
   content: HTMLElement[];
 }
 
-export class Gallery extends Component<IGallery> {
+export class GalleryView extends Component<IGallery> {
   protected contentElement: HTMLElement;
   constructor(container: HTMLElement) {
     super(container);

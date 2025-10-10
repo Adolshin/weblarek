@@ -1,5 +1,5 @@
 import { IEvents } from "../../base/Events.ts";
-import { CardFull, Card, TCard } from "./abstractCards.ts";
+import { CardFullView, CardView, TCard } from "./abstractCardsViews.ts";
 import { IProduct } from "../../../types/index.ts";
 import { ensureElement } from "../../../utils/utils.ts";
 
@@ -9,7 +9,7 @@ interface ICardActions {
 type TCardPreview = Pick<IProduct, "description">;
 type TCardBasket = Omit<TCard, "index">;
 
-export class CardCatalog extends CardFull {
+export class CardCatalogView extends CardFullView {
   constructor(container: HTMLElement, actions?: ICardActions) {
     super(container);
     if (actions?.onClick) {
@@ -18,7 +18,7 @@ export class CardCatalog extends CardFull {
   }
 }
 
-export class CardPreview extends CardFull<TCardPreview> {
+export class CardPreviewView extends CardFullView<TCardPreview> {
   protected descriptionElement: HTMLElement;
   protected buttonElement: HTMLButtonElement;
   constructor(container: HTMLElement, actions?: ICardActions) {
@@ -46,7 +46,7 @@ export class CardPreview extends CardFull<TCardPreview> {
   }
 }
 
-export class CardBasket extends Card<TCardBasket> {
+export class CardBasketView extends CardView<TCardBasket> {
   protected indexElement: HTMLElement;
   protected buttonElement: HTMLButtonElement;
   constructor(container: HTMLElement, actions?: ICardActions) {

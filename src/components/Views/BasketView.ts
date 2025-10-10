@@ -8,7 +8,7 @@ interface IBasket {
   price: number;
 }
 
-export class Basket extends Component<IBasket> {
+export class BasketView extends Component<IBasket> {
   protected buttonElement: HTMLButtonElement;
   protected contentElement: HTMLElement;
   protected priceElement: HTMLElement;

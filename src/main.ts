@@ -7,15 +7,15 @@ import { WeblarekApi } from "./components/Communication/WeblarekApi.ts";
 import { ensureElement } from "./utils/utils.ts";
 import { cloneTemplate } from "./utils/utils.ts";
 
-import { Catalog } from "./components/Models/Catalog.ts";
-import { Cart } from "./components/Models/Cart.ts";
-import { Buyer } from "./components/Models/Buyer.ts";
+import { CatalogModel } from "./components/Models/CatalogModel.ts";
+import { BasketModel } from "./components/Models/BasketModel.ts";
+import { BuyerModel } from "./components/Models/BuyerModel.ts";
 
-import { Header } from "./components/Views/Header.ts";
-import { Gallery } from "./components/Views/Gallery.ts";
-import { Modal } from "./components/Views/Modal.ts";
-import { Basket } from "./components/Views/Basket.ts";
-import { CardCatalog, CardPreview, CardBasket } from "./components/Views/Cards/Cards.ts";
+import { HeaderView } from "./components/Views/HeaderView.ts";
+import { GalleryView } from "./components/Views/GalleryView.ts";
+import { ModalView } from "./components/Views/ModalView.ts";
+import { BasketView } from "./components/Views/BasketView.ts";
+import { CardCatalogView, CardPreviewView, CardBasketView } from "./components/Views/Cards/CardsViews.ts";
 
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>("#card-catalog");
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>("#card-preview");
@@ -26,81 +26,81 @@ const BaseApi = new Api(API_URL);
 const weblarek = new WeblarekApi(BaseApi, CDN_URL);
 const events = new EventEmitter();
 
-const catalog = new Catalog(events);
-const cart = new Cart(events);
-const buyer = new Buyer();
+const catalogModel = new CatalogModel(events);
+const basketModel = new BasketModel(events);
+const buyerModel = new BuyerModel();
 
-const header = new Header(events, ensureElement<HTMLElement>(".header"));
-const gallery = new Gallery(ensureElement<HTMLElement>(".gallery"));
-const modal = new Modal(ensureElement<HTMLElement>(".modal"), ensureElement<HTMLElement>(".page"));
-const basket = new Basket(events, cloneTemplate(basketTemplate));
+const headerView = new HeaderView(events, ensureElement<HTMLElement>(".header"));
+const galleryView = new GalleryView(ensureElement<HTMLElement>(".gallery"));
+const modalView = new ModalView(ensureElement<HTMLElement>(".modal"), ensureElement<HTMLElement>(".page"));
+const basketView = new BasketView(events, cloneTemplate(basketTemplate));
 
-const cardPreview = new CardPreview(cloneTemplate(cardPreviewTemplate), {
+const cardPreview = new CardPreviewView(cloneTemplate(cardPreviewTemplate), {
   onClick: () => {
-    const activeCard = catalog.getProduct();
-    const inBasket = cart.checkProduct(activeCard?.id);
+    const activeCard = catalogModel.getProduct();
+    const inBasket = basketModel.checkProduct(activeCard?.id);
     if (!inBasket) {
       events.emit("basket:add");
     } else {
-      events.emit("basket:remove", catalog.getProduct());
+      events.emit("basket:remove", activeCard);
     }
   },
 });
 
 events.on("catalog:changed", () => {
-  const cards = catalog.getProductList().map((item) => {
-    const card = new CardCatalog(cloneTemplate(cardCatalogTemplate), {
+  const cards = catalogModel.getProductList().map((item) => {
+    const card = new CardCatalogView(cloneTemplate(cardCatalogTemplate), {
       onClick: () => events.emit("card:select", item),
     });
     return card.render(item);
   });
-  gallery.render({ content: cards });
+  galleryView.render({ content: cards });
 });
 
 events.on<IProduct>("card:select", (item) => {
-  catalog.setProduct(item.id);
+  catalogModel.setProduct(item.id);
 });
 
 events.on("selectedCard:changed", () => {
-  const activeCard = catalog.getProduct();
-  const inBasket = cart.checkProduct(activeCard?.id);
+  const activeCard = catalogModel.getProduct();
+  const inBasket = basketModel.checkProduct(activeCard?.id);
   const hasPrice = activeCard?.price !== null;
   cardPreview.renderButton(inBasket, hasPrice);
-  modal.render({ content: cardPreview.render(activeCard) });
-  modal.openModal();
+  modalView.render({ content: cardPreview.render(activeCard) });
+  modalView.openModal();
 });
 
 events.on("basket:add", () => {
-  cart.addProduct(catalog.getProduct());
+  basketModel.addProduct(catalogModel.getProduct());
 });
 
 events.on<IProduct>("basket:remove", (item) => {
-  cart.deleteProduct(item.id);
+  basketModel.deleteProduct(item.id);
 });
 
 events.on("basket:changed", () => {
-  header.render({ counter: cart.getProductQuantity() });
-  const activeCard = catalog.getProduct();
-  const inBasket = cart.checkProduct(activeCard?.id);
+  headerView.render({ counter: basketModel.getProductQuantity() });
+  const activeCard = catalogModel.getProduct();
+  const inBasket = basketModel.checkProduct(activeCard?.id);
   cardPreview.renderButton(inBasket);
-  const basketList = cart.getProductList().map((item, index) => {
-    const card = new CardBasket(cloneTemplate(cardBasketTemplate), {
+  const basketList = basketModel.getProductList().map((item, index) => {
+    const card = new CardBasketView(cloneTemplate(cardBasketTemplate), {
       onClick: () => events.emit("basket:remove", item),
     });
     return card.render(Object.assign(item, { index: index + 1 }));
   });
-  const totalPrice = cart.getTotalPrice();
-  basket.render({ content: basketList, price: totalPrice });
+  const totalPrice = basketModel.getTotalPrice();
+  basketView.render({ content: basketList, price: totalPrice });
 });
 
 events.on("basket:open", () => {
-  modal.render({ content: basket.render() });
-  modal.openModal();
+  modalView.render({ content: basketView.render() });
+  modalView.openModal();
 });
 
 weblarek.getProductList().then((data) => {
-  catalog.setProductList(data); //Записываем данные полученные с сервера в хранилище
-  console.log("Массив товаров из каталога", catalog.getProductList());
+  catalogModel.setProductList(data); //Записываем данные полученные с сервера в хранилище
+  console.log("Массив товаров из каталога", catalogModel.getProductList());
   // console.log(catalog);
   // cart.addProduct(catalog.getProductById("854cef69-976d-4c2a-a18c-2aa45046c390"));
   // cart.addProduct(catalog.getProductById("c101ab44-ed99-4a54-990d-47aa2bb4e7d9"));
