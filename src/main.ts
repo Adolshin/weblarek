@@ -16,11 +16,16 @@ import { GalleryView } from "./components/Views/GalleryView.ts";
 import { ModalView } from "./components/Views/ModalView.ts";
 import { BasketView } from "./components/Views/BasketView.ts";
 import { CardCatalogView, CardPreviewView, CardBasketView } from "./components/Views/Cards/CardsViews.ts";
+import { OrderFormView, ContactsFormView } from "./components/Views/Forms/FormViews.ts";
+import { SuccessView } from "./components/Views/SuccessView.ts";
 
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>("#card-catalog");
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>("#card-preview");
 const cardBasketTemplate = ensureElement<HTMLTemplateElement>("#card-basket");
 const basketTemplate = ensureElement<HTMLTemplateElement>("#basket");
+const orderFormTemplate = ensureElement<HTMLTemplateElement>("#order");
+const contactsFormTemplate = ensureElement<HTMLTemplateElement>("#contacts");
+const successTemplate = ensureElement<HTMLTemplateElement>("#success");
 
 const BaseApi = new Api(API_URL);
 const weblarek = new WeblarekApi(BaseApi, CDN_URL);
@@ -34,6 +39,13 @@ const headerView = new HeaderView(events, ensureElement<HTMLElement>(".header"))
 const galleryView = new GalleryView(ensureElement<HTMLElement>(".gallery"));
 const modalView = new ModalView(ensureElement<HTMLElement>(".modal"), ensureElement<HTMLElement>(".page"));
 const basketView = new BasketView(events, cloneTemplate(basketTemplate));
+
+const orderFormView = new OrderFormView(events, cloneTemplate(orderFormTemplate));
+const contactsFormView = new ContactsFormView(events, cloneTemplate(contactsFormTemplate));
+const successView = new SuccessView(events, cloneTemplate(successTemplate));
+
+console.log(orderFormView);
+console.log(contactsFormView);
 
 const cardPreview = new CardPreviewView(cloneTemplate(cardPreviewTemplate), {
   onClick: () => {
@@ -63,10 +75,11 @@ events.on<IProduct>("card:select", (item) => {
 
 events.on("selectedCard:changed", () => {
   const activeCard = catalogModel.getProduct();
-  const inBasket = basketModel.checkProduct(activeCard?.id);
-  const hasPrice = activeCard?.price !== null;
-  cardPreview.renderButton(inBasket, hasPrice);
-  modalView.render({ content: cardPreview.render(activeCard) });
+  const buttonState = {
+    inBasket: basketModel.checkProduct(activeCard?.id),
+    hasPrice: activeCard?.price !== null,
+  };
+  modalView.render({ content: cardPreview.render({ ...activeCard, ...buttonState }) });
   modalView.openModal();
 });
 
@@ -81,8 +94,10 @@ events.on<IProduct>("basket:remove", (item) => {
 events.on("basket:changed", () => {
   headerView.render({ counter: basketModel.getProductQuantity() });
   const activeCard = catalogModel.getProduct();
-  const inBasket = basketModel.checkProduct(activeCard?.id);
-  cardPreview.renderButton(inBasket);
+  const buttonState = {
+    inBasket: basketModel.checkProduct(activeCard?.id),
+  };
+  cardPreview.render(buttonState);
   const basketList = basketModel.getProductList().map((item, index) => {
     const card = new CardBasketView(cloneTemplate(cardBasketTemplate), {
       onClick: () => events.emit("basket:remove", item),
@@ -98,9 +113,27 @@ events.on("basket:open", () => {
   modalView.openModal();
 });
 
+events.on("basket:order", () => {
+  modalView.render({ content: orderFormView.render() });
+  modalView.openModal();
+});
+
+events.on("order:next", () => {
+  modalView.render({ content: contactsFormView.render() });
+});
+
+events.on("order:post", () => {
+  modalView.render({ content: successView.render() });
+});
+
+events.on("order:complete", () => {
+  modalView.closeModal()
+});
+
+
 weblarek.getProductList().then((data) => {
   catalogModel.setProductList(data); //Записываем данные полученные с сервера в хранилище
-  console.log("Массив товаров из каталога", catalogModel.getProductList());
+  // console.log("Массив товаров из каталога", catalogModel.getProductList());
   // console.log(catalog);
   // cart.addProduct(catalog.getProductById("854cef69-976d-4c2a-a18c-2aa45046c390"));
   // cart.addProduct(catalog.getProductById("c101ab44-ed99-4a54-990d-47aa2bb4e7d9"));
@@ -112,5 +145,15 @@ weblarek.getProductList().then((data) => {
   // const order = { ...user, ...total, ...items }; //Собираем общий объект для post запроса
   // weblarek.postOrder(order).then((data) => {
   //   console.log("Ответ сервера", data);
+  // });
+  // events.on("basket:toggle", () => {
+  //   const activeCard = catalogModel.getProduct();
+  //   if (!activeCard) return;
+  //   if (basketModel.checkProduct(activeCard.id)) {
+  //     basketModel.deleteProduct(activeCard.id);
+  //   } else {
+  //     basketModel.addProduct(activeCard);
+  //   }
+  //   events.emit("basket:changed");
   // });
 });

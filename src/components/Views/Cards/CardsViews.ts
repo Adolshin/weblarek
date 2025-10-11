@@ -5,8 +5,12 @@ import { ensureElement } from "../../../utils/utils.ts";
 interface ICardActions {
   onClick(): void;
 }
-type TCardPreview = Pick<IProduct, "description">;
 type TCardBasket = Omit<TCard, "index">;
+type TCardPreview = Pick<IProduct, "description">;
+type TButtonState = {
+  inBasket: boolean;
+  hasPrice: boolean;
+};
 
 export class CardCatalogView extends CardFullView {
   constructor(container: HTMLElement, actions?: ICardActions) {
@@ -17,7 +21,7 @@ export class CardCatalogView extends CardFullView {
   }
 }
 
-export class CardPreviewView extends CardFullView<TCardPreview> {
+export class CardPreviewView extends CardFullView<TCardPreview & TButtonState> {
   protected descriptionElement: HTMLElement;
   protected buttonElement: HTMLButtonElement;
   constructor(container: HTMLElement, actions?: ICardActions) {
@@ -31,18 +35,34 @@ export class CardPreviewView extends CardFullView<TCardPreview> {
   protected set description(value: string) {
     this.descriptionElement.textContent = value;
   }
-  renderButton(inBasket: boolean, hasPrice: boolean = true) {
-    if (!hasPrice) {
+
+  set inBasket(value: boolean) {
+    if (value) {
+      this.buttonElement.textContent = "Удалить из корзины";
+    } else {
+      this.buttonElement.textContent = "Купить";
+    }
+  }
+  set hasPrice(value: boolean) {
+    if (!value) {
       this.buttonElement.setAttribute("disabled", "");
       this.buttonElement.textContent = "Недоступно";
-    } else if (hasPrice && !inBasket) {
-      this.buttonElement.removeAttribute("disabled");
-      this.buttonElement.textContent = "Купить";
-    } else if (hasPrice && inBasket) {
-      this.buttonElement.textContent = "Удалить из корзины";
+    } else {
       this.buttonElement.removeAttribute("disabled");
     }
   }
+  // renderButton(inBasket: boolean, hasPrice: boolean = true) {
+  //   if (!hasPrice) {
+  //     this.buttonElement.setAttribute("disabled", "");
+  //     this.buttonElement.textContent = "Недоступно";
+  //   } else if (hasPrice && !inBasket) {
+  //     this.buttonElement.removeAttribute("disabled");
+  //     this.buttonElement.textContent = "Купить";
+  //   } else if (hasPrice && inBasket) {
+  //     this.buttonElement.textContent = "Удалить из корзины";
+  //     this.buttonElement.removeAttribute("disabled");
+  //   }
+  // }
 }
 
 export class CardBasketView extends CardView<TCardBasket> {
