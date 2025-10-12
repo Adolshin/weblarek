@@ -25,6 +25,7 @@ export class BasketModel {
 
   clearCart(): void {
     this.productList = [];
+    this.events.emit("basket:changed");
   }
 
   getTotalPrice(): number {

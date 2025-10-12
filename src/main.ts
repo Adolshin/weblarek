@@ -1,5 +1,5 @@
 import "./scss/styles.scss";
-import { IProduct } from "./types/index.ts";
+import { IProduct, IBuyer, IErrors, TErrorKeys } from "./types/index.ts";
 import { API_URL, CDN_URL } from "./utils/constants.ts";
 import { Api } from "./components/base/Api.ts";
 import { EventEmitter } from "./components/base/Events.ts";
@@ -33,7 +33,7 @@ const events = new EventEmitter();
 
 const catalogModel = new CatalogModel(events);
 const basketModel = new BasketModel(events);
-const buyerModel = new BuyerModel();
+const buyerModel = new BuyerModel(events);
 
 const headerView = new HeaderView(events, ensureElement<HTMLElement>(".header"));
 const galleryView = new GalleryView(ensureElement<HTMLElement>(".gallery"));
@@ -44,8 +44,7 @@ const orderFormView = new OrderFormView(events, cloneTemplate(orderFormTemplate)
 const contactsFormView = new ContactsFormView(events, cloneTemplate(contactsFormTemplate));
 const successView = new SuccessView(events, cloneTemplate(successTemplate));
 
-console.log(orderFormView);
-console.log(contactsFormView);
+basketView.render({ content: [] });
 
 const cardPreview = new CardPreviewView(cloneTemplate(cardPreviewTemplate), {
   onClick: () => {
@@ -113,23 +112,58 @@ events.on("basket:open", () => {
   modalView.openModal();
 });
 
-events.on("basket:order", () => {
+events.on<Partial<IBuyer>>("form:changed", (item) => {
+  buyerModel.setData(item);
+});
+
+events.on("buyer:changed", () => {
+  const errors = buyerModel.validateData();
+  const { payment, address, email, phone } = errors;
+  orderFormView.render({
+    payment: buyerModel.getData().payment,
+    address: buyerModel.getData().address,
+    valid: !address && !payment,
+    errors: Object.values({ payment, address })
+      .filter((i) => !!i)
+      .join("; "),
+  });
+
+  contactsFormView.render({
+    email: buyerModel.getData().email,
+    phone: buyerModel.getData().phone,
+    valid: !email && !phone,
+    errors: Object.values({ email, phone })
+      .filter((i) => !!i)
+      .join("; "),
+  });  
+});
+
+events.on("order:start", () => {
   modalView.render({ content: orderFormView.render() });
-  modalView.openModal();
 });
 
 events.on("order:next", () => {
-  modalView.render({ content: contactsFormView.render() });
+  modalView.render({ content: contactsFormView.render({ errors: "" }) });
 });
 
 events.on("order:post", () => {
-  modalView.render({ content: successView.render() });
+  const total = { total: basketModel.getTotalPrice() }; //Обьект с ценой для post запроса  
+  const items = { items: basketModel.getProductList().map((product) => product.id) }; //Обьект с id товаров для post запоса  
+  const user = buyerModel.getData(); //Получаем данные покупателя для post запроса
+  const order = { ...user, ...total, ...items }; //Собираем общий объект для post запроса
+  weblarek.postOrder(order).then((data) => {
+    console.log("Ответ сервера", data);
+    modalView.render({ content: successView.render({price: data.total}) });
+  });
+
+  
 });
 
 events.on("order:complete", () => {
-  modalView.closeModal()
+  basketModel.clearCart();
+  buyerModel.clearData();
+  modalView.closeModal();
 });
-
 
 weblarek.getProductList().then((data) => {
   catalogModel.setProductList(data); //Записываем данные полученные с сервера в хранилище
@@ -137,15 +171,7 @@ weblarek.getProductList().then((data) => {
   // console.log(catalog);
   // cart.addProduct(catalog.getProductById("854cef69-976d-4c2a-a18c-2aa45046c390"));
   // cart.addProduct(catalog.getProductById("c101ab44-ed99-4a54-990d-47aa2bb4e7d9"));
-  // const total = { total: cart.getTotalPrice() }; //Обьект с ценой для post запроса
-  // console.log("Общая стоимость товаров", total.total); //Для сверки данных о стоимости в корзине и в ответе сервера
-  // const items = { items: cart.getProductList().map((product) => product.id) }; //Обьект с id товаров для post запоса
-  // buyer.setData({ payment: "online", email: "test@test.ru", phone: "+71234567890", address: "Spb Vosstania 1" }); //Записываем данные покупателя
-  // const user = buyer.getData(); //Получаем данные покупателя для post запроса
-  // const order = { ...user, ...total, ...items }; //Собираем общий объект для post запроса
-  // weblarek.postOrder(order).then((data) => {
-  //   console.log("Ответ сервера", data);
-  // });
+
   // events.on("basket:toggle", () => {
   //   const activeCard = catalogModel.getProduct();
   //   if (!activeCard) return;

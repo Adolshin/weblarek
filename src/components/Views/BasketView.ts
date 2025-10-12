@@ -17,13 +17,19 @@ export class BasketView extends Component<IBasket> {
     this.priceElement = ensureElement<HTMLElement>(".basket__price", this.container);
     this.buttonElement = ensureElement<HTMLButtonElement>(".basket__button", this.container);
     this.buttonElement.addEventListener("click", () => {
-      this.events.emit("basket:order");
+      this.events.emit("order:start");
     });
   }
   protected set content(items: HTMLElement[]) {
-    this.contentElement.replaceChildren(...items);
+    if (!items.length) {
+      this.contentElement.textContent = "Корзина пуста";
+      this.buttonElement.setAttribute("disabled", "");
+    } else {
+      this.contentElement.replaceChildren(...items);
+      this.buttonElement.removeAttribute("disabled");
+    }
   }
-  protected set price(value:number) {
+  protected set price(value: number) {
     this.priceElement.textContent = `${value} синапсов`;
   }
 }

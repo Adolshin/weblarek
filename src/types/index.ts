@@ -23,7 +23,11 @@ export interface IBuyer {
 
 export interface IErrors extends Omit<IBuyer, "payment"> {
   payment: string;
+  valid: boolean;
+  errors: string;
 }
+
+export type TErrorKeys = keyof IErrors;
 
 export interface IProductListResponse {
   total: number;
