@@ -182,4 +182,10 @@ weblarek.getProductList().then((data) => {
   //   }
   //   events.emit("basket:changed");
   // });
+      // this.inputElements.forEach((input) => {
+    //   const inputName = input.getAttribute("name");
+    //   if (inputName === "address") {
+    //     input.value = value;
+    //   }
+    // });
 });

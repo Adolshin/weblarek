@@ -12,8 +12,11 @@ export class ModalView extends Component<IModal> {
     super(container);
     this.contentElement = ensureElement<HTMLElement>(".modal__content", this.container);
     this.buttonElement = ensureElement<HTMLButtonElement>(".modal__close", this.container);
-    this.buttonElement.addEventListener("click", () => {
-      this.closeModal();
+    this.container.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      if (target.classList.contains("modal__close") || target.classList.contains("modal")) {
+        this.closeModal();
+      }
     });
   }
   protected set content(item: HTMLElement) {

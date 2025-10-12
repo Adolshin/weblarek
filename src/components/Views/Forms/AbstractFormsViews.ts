@@ -3,7 +3,6 @@ import { Component } from "../../base/Component.ts";
 import { IEvents } from "../../base/Events.ts";
 import { IErrors } from "../../../types/index.ts";
 
-
 export abstract class FormView extends Component<IErrors> {
   protected buttonElement: HTMLButtonElement;
   protected errorElement: HTMLElement;
@@ -18,12 +17,27 @@ export abstract class FormView extends Component<IErrors> {
       input.addEventListener("input", (event) => {
         const input = event.target as HTMLInputElement;
         const inputName = input.getAttribute("name");
-        events.emit("form:changed", { [inputName!]: input.value });
+        this.events.emit("form:changed", { [inputName!]: input.value });
       });
     });
   }
   protected set errors(value: string) {
     this.errorElement.textContent = value;
   }
-  
+
+  protected set valid(value: boolean) {
+    if (value) {
+      this.buttonElement.removeAttribute("disabled");
+    } else {
+      this.buttonElement.setAttribute("disabled", "");
+    }
+  }
+  inputHandler(inputlist: HTMLInputElement[], name: string, value: string) {
+    inputlist.forEach((input) => {
+      const inputName = input.getAttribute("name");
+      if (inputName === `${name}`) {
+        input.value = value;
+      }
+    });
+  }
 }
