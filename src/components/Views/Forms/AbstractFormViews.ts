@@ -3,7 +3,7 @@ import { Component } from "../../base/Component.ts";
 import { IEvents } from "../../base/Events.ts";
 import { IErrors } from "../../../types/index.ts";
 
-interface IFormErrors extends IErrors {  
+interface IFormErrors extends IErrors {
   valid: boolean;
   errors: string;
 }
@@ -14,7 +14,6 @@ export abstract class FormView extends Component<IFormErrors> {
   protected inputElements: HTMLInputElement[];
   constructor(protected events: IEvents, protected container: HTMLFormElement) {
     super(container);
-    this.events = events;
     this.buttonElement = ensureElement<HTMLButtonElement>("[type=submit]", this.container);
     this.errorElement = ensureElement<HTMLButtonElement>(".form__errors", this.container);
     this.inputElements = ensureAllElements<HTMLInputElement>(".form__input", this.container);
