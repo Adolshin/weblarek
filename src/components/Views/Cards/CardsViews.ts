@@ -1,4 +1,4 @@
-import { CardFullView, CardView, TCard } from "./AbstractCardsViews.ts";
+import { CardFullView, CardView, TCard } from "./AbstractCardViews.ts";
 import { IProduct } from "../../../types/index.ts";
 import { ensureElement } from "../../../utils/utils.ts";
 

@@ -148,7 +148,6 @@ events.on("order:post", () => {
   const user = buyerModel.getData(); //Получаем данные покупателя для post запроса
   const order = { ...user, ...total, ...items }; //Собираем общий объект для post запроса
   weblarek.postOrder(order).then((data) => {
-    console.log(data)
     modalView.render({ content: successView.render({ price: data.total }) });
   });
 });

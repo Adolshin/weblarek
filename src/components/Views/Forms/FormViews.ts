@@ -1,5 +1,5 @@
 import { ensureAllElements } from "../../../utils/utils.ts";
-import { FormView } from "./AbstractFormsViews.ts";
+import { FormView } from "./AbstractFormViews.ts";
 import { IEvents } from "../../base/Events.ts";
 
 export class OrderFormView extends FormView {

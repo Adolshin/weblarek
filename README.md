@@ -315,5 +315,29 @@ interface IBasket {
   price: number;
 }
 ```
+#### Класс ModalView
+Является производным от базового класса Component. Отвечает за рендеринг модального окна
+
+Конструктор:  
+`constructor(events: IEvents, container: HTMLElement)` - принимает экземпляр класса EventEmitter и ссылку на DOM элемент для передачи в конструктор родительского класса
+
+Поля класса:
+`events: IEvents` - экземпляр класса EventEmitter
+`buttonElement: HTMLButtonElement` - DOM элемент кнопки оформления товаров
+`contentElement: HTMLElement` - DOM элемент для отображения списка товаров
+`priceElement: HTMLElement` - DOM элемент для отображения общей стомости товаров
+
+Методы класса:
+`set content(items: HTMLElement[])` - сеттер, служит для обработки данных, полученных в аргументе медода render родительского класса, отвечает за отображение списка товаров
+`set price(value: number)`- - сеттер, служит для обработки данных, полученных в аргументе медода render родительского класса, отвечает за отображение общей стомости товаров
+
+Вспомогательный интерфейс:
+Интерфейс IBasket описывает тип объекта, который принимает метод render родительского класса, передается дженериком
+```
+interface IBasket {
+  content: HTMLElement[];
+  price: number;
+}
+```
 
 
