@@ -1,11 +1,13 @@
-import { CardFullView, CardView, TCard } from "./abstractCardsViews.ts";
+import { CardFullView, CardView, TCard } from "./AbstractCardsViews.ts";
 import { IProduct } from "../../../types/index.ts";
 import { ensureElement } from "../../../utils/utils.ts";
 
 interface ICardActions {
   onClick(): void;
 }
-type TCardBasket = Omit<TCard, "index">;
+type TCardBasket = TCard & {
+  index: number;
+};
 type TCardPreview = Pick<IProduct, "description">;
 type TButtonState = {
   inBasket: boolean;
@@ -51,18 +53,6 @@ export class CardPreviewView extends CardFullView<TCardPreview & TButtonState> {
       this.buttonElement.removeAttribute("disabled");
     }
   }
-  // renderButton(inBasket: boolean, hasPrice: boolean = true) {
-  //   if (!hasPrice) {
-  //     this.buttonElement.setAttribute("disabled", "");
-  //     this.buttonElement.textContent = "Недоступно";
-  //   } else if (hasPrice && !inBasket) {
-  //     this.buttonElement.removeAttribute("disabled");
-  //     this.buttonElement.textContent = "Купить";
-  //   } else if (hasPrice && inBasket) {
-  //     this.buttonElement.textContent = "Удалить из корзины";
-  //     this.buttonElement.removeAttribute("disabled");
-  //   }
-  // }
 }
 
 export class CardBasketView extends CardView<TCardBasket> {

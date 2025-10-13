@@ -21,22 +21,18 @@ export interface IBuyer {
   address: string;
 }
 
-export interface IErrors extends Omit<IBuyer, "payment"> {
-  payment: string;
-  valid: boolean;
-  errors: string;
+export interface IOrder extends IBuyer {
+  total: number;
+  items: string[];
 }
 
-export type TErrorKeys = keyof IErrors;
+export interface IErrors extends Omit<IBuyer, "payment"> {
+  payment: string;
+}
 
 export interface IProductListResponse {
   total: number;
   items: IProduct[];
-}
-
-export interface IOrder extends IBuyer {
-  total: number;
-  items: string[];
 }
 
 export interface IOrderResponse {

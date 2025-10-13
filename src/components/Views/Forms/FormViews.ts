@@ -1,4 +1,4 @@
-import { ensureElement, ensureAllElements } from "../../../utils/utils.ts";
+import { ensureAllElements } from "../../../utils/utils.ts";
 import { FormView } from "./AbstractFormsViews.ts";
 import { IEvents } from "../../base/Events.ts";
 
@@ -11,11 +11,11 @@ export class OrderFormView extends FormView {
       item.addEventListener("click", (event) => {
         const button = event.target as HTMLButtonElement;
         const buttonName = button.getAttribute("name");
-        this.events.emit("form:changed", { payment: buttonName });
+        this.eventEmit("payment", buttonName!);
       });
     });
-    this.buttonElement.addEventListener("click", (e) => {
-      e.preventDefault();
+    this.buttonElement.addEventListener("click", (event) => {
+      event.preventDefault();
       this.events.emit("order:next");
     });
   }
@@ -42,8 +42,8 @@ export class OrderFormView extends FormView {
 export class ContactsFormView extends FormView {
   constructor(events: IEvents, container: HTMLFormElement) {
     super(events, container);
-    this.buttonElement.addEventListener("click", (e) => {
-      e.preventDefault();
+    this.buttonElement.addEventListener("click", (event) => {
+      event.preventDefault();
       events.emit("order:post");
     });
   }

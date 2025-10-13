@@ -3,9 +3,7 @@ import { IEvents } from "../base/Events.ts";
 
 export class BasketModel {
   protected productList: IProduct[] = [];
-  constructor(protected events: IEvents) {
-    this.events = events;
-  }
+  constructor(protected events: IEvents) {}
   getProductList(): IProduct[] {
     return this.productList;
   }
@@ -23,7 +21,7 @@ export class BasketModel {
     this.events.emit("basket:changed");
   }
 
-  clearCart(): void {
+  clearBasket(): void {
     this.productList = [];
     this.events.emit("basket:changed");
   }

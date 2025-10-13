@@ -9,9 +9,7 @@ export class BuyerModel {
     phone: "",
     address: "",    
   };
-  constructor(protected events: IEvents) {
-    this.events = events;
-  }
+  constructor(protected events: IEvents) {}
   setData(userData: Partial<IBuyer>): void {
     this.data = {
       ...this.data,
