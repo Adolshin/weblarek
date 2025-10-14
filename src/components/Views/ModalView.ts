@@ -12,22 +12,31 @@ export class ModalView extends Component<IModal> {
     super(container);
     this.contentElement = ensureElement<HTMLElement>(".modal__content", this.container);
     this.buttonElement = ensureElement<HTMLButtonElement>(".modal__close", this.container);
-    this.container.addEventListener("click", (event) => {
-      const target = event.target as HTMLElement;
-      if (target.classList.contains("modal__close") || target.classList.contains("modal")) {
-        this.closeModal();
-      }
-    });
   }
   protected set content(item: HTMLElement) {
     this.contentElement.replaceChildren(item);
   }
+  protected handleClick = (evt: MouseEvent) => {
+    const target = evt.target as HTMLElement;
+    if (target.classList.contains("modal__close") || target.classList.contains("modal")) {
+      this.closeModal();
+    }
+  };
+  protected handleEscape = (evt: KeyboardEvent) => {
+    if (evt.key === "Escape") {
+      this.closeModal();
+    }
+  };
   closeModal() {
     this.container.classList.remove("modal_active");
     this.pageContainer.classList.remove("page__wrapper_locked");
+    this.container.removeEventListener("click", this.handleClick);
+    document.removeEventListener("keydown", this.handleEscape);
   }
   openModal() {
     this.container.classList.add("modal_active");
     this.pageContainer.classList.add("page__wrapper_locked");
+    this.container.addEventListener("click", this.handleClick);
+    document.addEventListener("keydown", this.handleEscape);
   }
 }

@@ -1,4 +1,4 @@
-import { IEvents } from "../base/Events.ts";
+import { IEvents, EventType } from "../base/Events.ts";
 import { ensureElement } from "../../utils/utils.ts";
 import { Component } from "../base/Component.ts";
 
@@ -17,7 +17,7 @@ export class BasketView extends Component<IBasket> {
     this.priceElement = ensureElement<HTMLElement>(".basket__price", this.container);
     this.buttonElement = ensureElement<HTMLButtonElement>(".basket__button", this.container);
     this.buttonElement.addEventListener("click", () => {
-      this.events.emit("order:start");
+      this.events.emit(EventType.orderStart);
     });
   }
   protected set content(items: HTMLElement[]) {

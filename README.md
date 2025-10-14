@@ -331,6 +331,8 @@ interface IBasket {
 
 Методы класса:
 - `set content(items: HTMLElement[])` - сеттер, служит для обработки данных, полученных в аргументе медода render родительского класса, отвечает за отображение содержимого модального окна
+- `handleClick = (evt: MouseEvent)` - метод обработки события для закрытия модального окна с помощью клика мышью
+- `handleEscape = (evt: KeyboardEvent)` - метод обработки события для закрытия модального окна с помощью клавиатуры
 - `closeModal()` - метод для закрытия модального окна
 - `openModal()` - - метод для открытия модального окна
 
@@ -584,6 +586,27 @@ interface ISuccess {
 
 ### События 
 
+Все события генерируемые с помощью брокера событий типизированы с помощью enum
+
+```
+enum EventType {
+  catalogChanged = "catalog:changed",
+  selectedCardChanged = "selectedCard:changed",
+  cardSelect = "card:select",
+  basketOpen = "basket:open",
+  basketAdd = "basket:add",
+  basketRemove = "basket:remove",
+  basketChanged = "basket:changed",
+  formChanged = "form:changed",
+  buyerChanged = "buyer:changed",
+  orderStart = "order:start",
+  orderNext = "order:next",
+  orderPost = "order:post",
+  orderComplete = "order:complete",
+}
+```
+
+Описание событий:
 - `catalog:changed` - событие генерируемое экзепляром класса модели каталога (CatalogModel) в ответ на изменение списка товаров (setProductList())
 - `selectedCard:changed` - обытие генерируемое экзепляром класса модели каталога (CatalogModel) в ответ на изменение выбранной карточки (setProduct())
 - `card:select` - событие генерируемое экзепляром класса представления карточки каталога (CardCatalogView) в ответ на клик по карточке каталога

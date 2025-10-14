@@ -2,7 +2,7 @@ import "./scss/styles.scss";
 import { IProduct, IBuyer } from "./types/index.ts";
 import { API_URL, CDN_URL } from "./utils/constants.ts";
 import { Api } from "./components/base/Api.ts";
-import { EventEmitter } from "./components/base/Events.ts";
+import { EventEmitter, EventType } from "./components/base/Events.ts";
 import { WeblarekApi } from "./components/Communication/WeblarekApi.ts";
 import { ensureElement, cloneTemplate } from "./utils/utils.ts";
 
@@ -47,28 +47,28 @@ const cardPreview = new CardPreviewView(cloneTemplate(cardPreviewTemplate), {
     const activeCard = catalogModel.getProduct();
     const inBasket = basketModel.checkProduct(activeCard?.id);
     if (!inBasket) {
-      events.emit("basket:add");
+      events.emit(EventType.basketAdd);
     } else {
-      events.emit("basket:remove", activeCard);
+      events.emit(EventType.basketRemove, activeCard);
     }
   },
 });
 
-events.on("catalog:changed", () => {
+events.on(EventType.catalogChanged, () => {
   const cards = catalogModel.getProductList().map((item) => {
     const card = new CardCatalogView(cloneTemplate(cardCatalogTemplate), {
-      onClick: () => events.emit("card:select", item),
+      onClick: () => events.emit(EventType.cardSelect, item),
     });
     return card.render(item);
   });
   catalogView.render({ content: cards });
 });
 
-events.on<IProduct>("card:select", (item) => {
+events.on<IProduct>(EventType.cardSelect, (item) => {
   catalogModel.setProduct(item.id);
 });
 
-events.on("selectedCard:changed", () => {
+events.on(EventType.selectedCardChanged, () => {
   const activeCard = catalogModel.getProduct();
   const buttonState = {
     inBasket: basketModel.checkProduct(activeCard?.id),
@@ -78,20 +78,20 @@ events.on("selectedCard:changed", () => {
   modalView.openModal();
 });
 
-events.on("basket:open", () => {
+events.on(EventType.basketOpen, () => {
   modalView.render({ content: basketView.render() });
   modalView.openModal();
 });
 
-events.on("basket:add", () => {
+events.on(EventType.basketAdd, () => {
   basketModel.addProduct(catalogModel.getProduct());
 });
 
-events.on<IProduct>("basket:remove", (item) => {
+events.on<IProduct>(EventType.basketRemove, (item) => {
   basketModel.deleteProduct(item.id);
 });
 
-events.on("basket:changed", () => {
+events.on(EventType.basketChanged, () => {
   headerView.render({ counter: basketModel.getProductQuantity() });
   const activeCard = catalogModel.getProduct();
   const buttonState = {
@@ -100,7 +100,7 @@ events.on("basket:changed", () => {
   cardPreview.render(buttonState);
   const basketList = basketModel.getProductList().map((item, index) => {
     const card = new CardBasketView(cloneTemplate(cardBasketTemplate), {
-      onClick: () => events.emit("basket:remove", item),
+      onClick: () => events.emit(EventType.basketRemove, item),
     });
     return card.render(Object.assign(item, { index: index + 1 }));
   });
@@ -108,11 +108,11 @@ events.on("basket:changed", () => {
   basketView.render({ content: basketList, price: totalPrice });
 });
 
-events.on<Partial<IBuyer>>("form:changed", (item) => {
+events.on<Partial<IBuyer>>(EventType.formChanged, (item) => {
   buyerModel.setData(item);
 });
 
-events.on("buyer:changed", () => {
+events.on(EventType.buyerChanged, () => {
   const errors = buyerModel.validateData();
   const { payment, address, email, phone } = errors;
   orderFormView.render({
@@ -134,31 +134,41 @@ events.on("buyer:changed", () => {
   });
 });
 
-events.on("order:start", () => {
+events.on(EventType.orderStart, () => {
   modalView.render({ content: orderFormView.render({ errors: "" }) });
 });
 
-events.on("order:next", () => {
+events.on(EventType.orderNext, () => {
   modalView.render({ content: contactsFormView.render({ errors: "" }) });
 });
 
-events.on("order:post", () => {
+events.on(EventType.orderPost, () => {
   const total = { total: basketModel.getTotalPrice() }; //Обьект с ценой для post запроса
   const items = { items: basketModel.getProductList().map((product) => product.id) }; //Обьект с id товаров для post запоса
   const user = buyerModel.getData(); //Получаем данные покупателя для post запроса
   const order = { ...user, ...total, ...items }; //Собираем общий объект для post запроса
-  weblarek.postOrder(order).then((data) => {
-    modalView.render({ content: successView.render({ price: data.total }) });
-  });
+  weblarek
+    .postOrder(order)
+    .then((data) => {
+      modalView.render({ content: successView.render({ price: data.total }) });
+    })
+    .catch((err) => {
+      console.error("Произошла ошибка: ", err);
+    });
 });
 
-events.on("order:complete", () => {
+events.on(EventType.orderComplete, () => {
   basketModel.clearBasket();
   buyerModel.clearData();
   modalView.closeModal();
 });
 
-weblarek.getProductList().then((data) => {
-  catalogModel.setProductList(data);
-  basketModel.clearBasket();
-});
+weblarek
+  .getProductList()
+  .then((data) => {
+    catalogModel.setProductList(data);
+    basketModel.clearBasket();
+  })
+  .catch((err) => {
+    console.error("Произошла ошибка: ", err);
+  });

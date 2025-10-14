@@ -1,14 +1,14 @@
 import { IProduct } from "../../types/index.ts";
-import { IEvents } from "../base/Events.ts";
+import { IEvents, EventType } from "../base/Events.ts";
 
 export class CatalogModel {
   protected productList: IProduct[] = [];
-  protected product?: IProduct;  
+  protected product?: IProduct;
   constructor(protected events: IEvents) {}
 
   setProductList(data: IProduct[]): void {
     this.productList = data;
-    this.events.emit("catalog:changed");
+    this.events.emit(EventType.catalogChanged);
   }
 
   getProductList(): IProduct[] {
@@ -24,7 +24,7 @@ export class CatalogModel {
   setProduct(id: string): void {
     const product = this.getProductById(id);
     this.product = product;
-    this.events.emit("selectedCard:changed");
+    this.events.emit(EventType.selectedCardChanged);
   }
   getProduct(): IProduct | undefined {
     return this.product;

@@ -1,10 +1,10 @@
 import { ensureElement } from "../../utils/utils.ts";
 import { Component } from "../base/Component.ts";
-import { IEvents } from "../base/Events.ts";
+import { IEvents, EventType } from "../base/Events.ts";
 
 interface ISuccess {
   content: HTMLElement;
-  price: number
+  price: number;
 }
 
 export class SuccessView extends Component<ISuccess> {
@@ -15,10 +15,10 @@ export class SuccessView extends Component<ISuccess> {
     this.buttonElement = ensureElement<HTMLButtonElement>(".button", this.container);
     this.priceElement = ensureElement<HTMLElement>(".order-success__description", this.container);
     this.buttonElement.addEventListener("click", () => {
-      events.emit("order:complete");
+      events.emit(EventType.orderComplete);
     });
   }
-  set price(value:number) {
-    this.priceElement.textContent = `Списано ${value} синапсов`
+  set price(value: number) {
+    this.priceElement.textContent = `Списано ${value} синапсов`;
   }
 }

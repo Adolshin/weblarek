@@ -1,6 +1,6 @@
 import { ensureElement, ensureAllElements } from "../../../utils/utils.ts";
 import { Component } from "../../base/Component.ts";
-import { IEvents } from "../../base/Events.ts";
+import { IEvents, EventType} from "../../base/Events.ts";
 import { IErrors } from "../../../types/index.ts";
 
 interface IFormErrors extends IErrors {
@@ -43,6 +43,6 @@ export abstract class FormView extends Component<IFormErrors> {
     });
   }
   protected eventEmit(field: string, value: string) {
-    this.events.emit("form:changed", { [field]: value });
+    this.events.emit(EventType.formChanged, { [field]: value });
   }
 }

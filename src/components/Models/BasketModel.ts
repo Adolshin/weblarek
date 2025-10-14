@@ -1,5 +1,5 @@
 import { IProduct } from "../../types/index.ts";
-import { IEvents } from "../base/Events.ts";
+import { IEvents, EventType } from "../base/Events.ts";
 
 export class BasketModel {
   protected productList: IProduct[] = [];
@@ -11,19 +11,19 @@ export class BasketModel {
   addProduct(product: IProduct | undefined): void {
     if (product && !this.checkProduct(product.id)) {
       this.productList.push(product);
-      this.events.emit("basket:changed");
+      this.events.emit(EventType.basketChanged);
     }
   }
 
   deleteProduct(id: string): void {
     const updatedProductList = this.productList.filter((product) => product.id !== id);
     this.productList = updatedProductList;
-    this.events.emit("basket:changed");
+    this.events.emit(EventType.basketChanged);
   }
 
   clearBasket(): void {
     this.productList = [];
-    this.events.emit("basket:changed");
+    this.events.emit(EventType.basketChanged);
   }
 
   getTotalPrice(): number {

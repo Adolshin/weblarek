@@ -1,6 +1,6 @@
 import { ensureAllElements } from "../../../utils/utils.ts";
 import { FormView } from "./AbstractFormViews.ts";
-import { IEvents } from "../../base/Events.ts";
+import { IEvents, EventType } from "../../base/Events.ts";
 
 export class OrderFormView extends FormView {
   protected switchElement: HTMLButtonElement[];
@@ -16,7 +16,7 @@ export class OrderFormView extends FormView {
     });
     this.buttonElement.addEventListener("click", (event) => {
       event.preventDefault();
-      this.events.emit("order:next");
+      this.events.emit(EventType.orderNext);
     });
   }
   protected set address(value: string) {
@@ -44,7 +44,7 @@ export class ContactsFormView extends FormView {
     super(events, container);
     this.buttonElement.addEventListener("click", (event) => {
       event.preventDefault();
-      events.emit("order:post");
+      events.emit(EventType.orderPost);
     });
   }
 

@@ -1,6 +1,6 @@
 import { ensureElement } from "../../utils/utils.ts";
 import { Component } from "../base/Component.ts";
-import { IEvents } from "../base/Events.ts";
+import { IEvents, EventType } from "../base/Events.ts";
 
 interface IHeader {
   counter: number;
@@ -14,7 +14,7 @@ export class HeaderView extends Component<IHeader> {
     this.counterElement = ensureElement<HTMLElement>(".header__basket-counter", this.container);
     this.buttonElement = ensureElement<HTMLButtonElement>(".header__basket", this.container);
     this.buttonElement.addEventListener("click", () => {
-      this.events.emit("basket:open");
+      this.events.emit(EventType.basketOpen);
     });
   }
   protected set counter(value: number) {

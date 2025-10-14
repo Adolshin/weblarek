@@ -1,13 +1,12 @@
-import { IBuyer } from "../../types/index.ts";
-import { IErrors } from "../../types/index.ts";
-import { IEvents } from "../base/Events.ts";
+import { IBuyer, IErrors } from "../../types/index.ts";
+import { IEvents, EventType } from "../base/Events.ts";
 
 export class BuyerModel {
   protected data: IBuyer = {
     payment: "",
     email: "",
     phone: "",
-    address: "",    
+    address: "",
   };
   constructor(protected events: IEvents) {}
   setData(userData: Partial<IBuyer>): void {
@@ -15,7 +14,7 @@ export class BuyerModel {
       ...this.data,
       ...userData,
     };
-    this.events.emit("buyer:changed");
+    this.events.emit(EventType.buyerChanged);
   }
 
   getData(): IBuyer {
@@ -26,7 +25,7 @@ export class BuyerModel {
     Object.keys(this.data).forEach((key) => {
       this.data[key as keyof IBuyer] = "";
     });
-    this.events.emit("buyer:changed");
+    this.events.emit(EventType.buyerChanged);
   }
 
   validateData(): Partial<IErrors> {
