@@ -9,6 +9,7 @@
 - src/components/base/ — папка с базовым кодом
 - src/components/Models/ — папка с классами слоя модели данных
 - src/components/Communication/ — папка с классом коммуникационного слоя
+- src/components/View/ — папка с классами слоя представления
 
 Важные файлы:
 
@@ -25,14 +26,14 @@
 
 ```
 npm install
-npm run start
+npm run dev
 ```
 
 или
 
 ```
 yarn
-yarn start
+yarn dev
 ```
 
 ## Сборка
