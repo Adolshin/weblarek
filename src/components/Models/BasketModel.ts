@@ -1,5 +1,6 @@
 import { IProduct } from "../../types/index.ts";
-import { IEvents, EventType } from "../base/Events.ts";
+import { IEvents } from "../base/Events.ts";
+import { EventType } from "../../utils/constants.ts";
 
 export class BasketModel {
   protected productList: IProduct[] = [];

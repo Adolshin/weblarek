@@ -1,7 +1,8 @@
 import { ensureElement, ensureAllElements } from "../../../utils/utils.ts";
 import { Component } from "../../base/Component.ts";
-import { IEvents, EventType} from "../../base/Events.ts";
+import { IEvents } from "../../base/Events.ts";
 import { IErrors } from "../../../types/index.ts";
+import { EventType } from "../../../utils/constants.ts";
 
 interface IFormErrors extends IErrors {
   valid: boolean;

@@ -17,3 +17,21 @@ export const categoryMap = {
   'дополнительное': 'card__category_additional',
   'другое': 'card__category_other',
 };
+
+export enum EventType {
+  catalogChanged = "catalog:changed",
+  selectedCardChanged = "selectedCard:changed",
+  cardSelect = "card:select",
+  basketOpen = "basket:open",
+  basketAdd = "basket:add",
+  basketRemove = "basket:remove",
+  basketChanged = "basket:changed",
+  formChanged = "form:changed",
+  buyerChanged = "buyer:changed",
+  orderStart = "order:start",
+  orderNext = "order:next",
+  orderPost = "order:post",
+  orderComplete = "order:complete",
+  modalStateChanged = "modalState:changed",
+  modalClose = "modal:close"
+}

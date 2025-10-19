@@ -1,6 +1,7 @@
 import { ensureElement } from "../../utils/utils.ts";
 import { Component } from "../base/Component.ts";
-import { IEvents, EventType } from "../base/Events.ts";
+import { IEvents } from "../base/Events.ts";
+import { EventType } from "../../utils/constants.ts";
 
 interface IHeader {
   counter: number;

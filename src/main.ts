@@ -1,11 +1,12 @@
 import "./scss/styles.scss";
 import { IProduct, IBuyer } from "./types/index.ts";
-import { API_URL, CDN_URL } from "./utils/constants.ts";
+import { API_URL, CDN_URL, EventType } from "./utils/constants.ts";
 import { Api } from "./components/base/Api.ts";
-import { EventEmitter, EventType } from "./components/base/Events.ts";
+import { EventEmitter } from "./components/base/Events.ts";
 import { WeblarekApi } from "./components/Communication/WeblarekApi.ts";
 import { ensureElement, cloneTemplate } from "./utils/utils.ts";
 
+import { AppModel } from "./components/Models/appModel.ts";
 import { CatalogModel } from "./components/Models/CatalogModel.ts";
 import { BasketModel } from "./components/Models/BasketModel.ts";
 import { BuyerModel } from "./components/Models/BuyerModel.ts";
@@ -29,6 +30,7 @@ const successTemplate = ensureElement<HTMLTemplateElement>("#success");
 const BaseApi = new Api(API_URL);
 const weblarek = new WeblarekApi(BaseApi, CDN_URL);
 const events = new EventEmitter();
+const appModel = new AppModel(events);
 
 const catalogModel = new CatalogModel(events);
 const basketModel = new BasketModel(events);
@@ -36,7 +38,7 @@ const buyerModel = new BuyerModel(events);
 
 const headerView = new HeaderView(events, ensureElement<HTMLElement>(".header"));
 const catalogView = new CatalogView(ensureElement<HTMLElement>(".gallery"));
-const modalView = new ModalView(ensureElement<HTMLElement>(".modal"), ensureElement<HTMLElement>(".page__wrapper"));
+const modalView = new ModalView(events, ensureElement<HTMLElement>(".modal"), ensureElement<HTMLElement>(".page"));
 const basketView = new BasketView(events, cloneTemplate(basketTemplate));
 
 const orderFormView = new OrderFormView(events, cloneTemplate(orderFormTemplate));
@@ -52,6 +54,15 @@ const cardPreview = new CardPreviewView(cloneTemplate(cardPreviewTemplate), {
       events.emit(EventType.basketRemove, activeCard);
     }
   },
+});
+
+events.on(EventType.modalClose, () => {
+  appModel.toggleModalState();
+  // appModel.closeModal();
+});
+
+events.on(EventType.modalStateChanged, () => {
+  modalView.render({ open: appModel.getModalState() });
 });
 
 events.on(EventType.catalogChanged, () => {
@@ -74,13 +85,15 @@ events.on(EventType.selectedCardChanged, () => {
     inBasket: basketModel.checkProduct(activeCard?.id),
     hasPrice: activeCard?.price !== null,
   };
-  modalView.render({ content: cardPreview.render({ ...activeCard, ...buttonState }) });
-  modalView.openModal();
+  modalView.render({ content: cardPreview.render({ ...activeCard, ...buttonState }) }); 
+  appModel.toggleModalState();
+  // appModel.openModal();
 });
 
 events.on(EventType.basketOpen, () => {
   modalView.render({ content: basketView.render() });
-  modalView.openModal();
+  appModel.toggleModalState();
+  // appModel.openModal();
 });
 
 events.on(EventType.basketAdd, () => {
@@ -150,6 +163,8 @@ events.on(EventType.orderPost, () => {
   weblarek
     .postOrder(order)
     .then((data) => {
+      basketModel.clearBasket();
+      buyerModel.clearData();
       modalView.render({ content: successView.render({ price: data.total }) });
     })
     .catch((err) => {
@@ -158,9 +173,8 @@ events.on(EventType.orderPost, () => {
 });
 
 events.on(EventType.orderComplete, () => {
-  basketModel.clearBasket();
-  buyerModel.clearData();
-  modalView.closeModal();
+  appModel.toggleModalState();
+  // appModel.closeModal();
 });
 
 weblarek

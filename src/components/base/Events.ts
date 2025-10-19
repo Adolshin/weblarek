@@ -91,23 +91,3 @@ export class EventEmitter implements IEvents {
     };
   }
 }
-
-/**
- * Типизация событий
- */
-
-export enum EventType {
-  catalogChanged = "catalog:changed",
-  selectedCardChanged = "selectedCard:changed",
-  cardSelect = "card:select",
-  basketOpen = "basket:open",
-  basketAdd = "basket:add",
-  basketRemove = "basket:remove",
-  basketChanged = "basket:changed",
-  formChanged = "form:changed",
-  buyerChanged = "buyer:changed",
-  orderStart = "order:start",
-  orderNext = "order:next",
-  orderPost = "order:post",
-  orderComplete = "order:complete",
-}
