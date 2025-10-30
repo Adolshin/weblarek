@@ -26,10 +26,12 @@
     border-radius: 3rem;
     box-sizing: border-box;
     position: relative;
+    height: 100%;
   }
 
   &__content {
     flex-grow: 1;
+    height: 100%;
   }
 
   &__title {
